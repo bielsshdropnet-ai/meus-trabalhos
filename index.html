@@ -379,7 +379,7 @@
   </div>
   <h1>Acervo Acadêmico</h1>
   <p class="curso">Repositório de Trabalhos — Estágio Supervisionado e Produções Acadêmicas</p>
-  <p class="desc">PDF mostra pré-visualização da 1ª página. Word abre no visualizador online. Clique para ver — sem baixar!</p>
+  <p class="desc">PDF e Word abrem direto para visualização — sem baixar!</p>
 </header>
 
 <div class="cabecalho-acoes">
@@ -393,14 +393,13 @@
 
 <footer>
   <strong>Acervo Acadêmico — Ciências da Natureza | UFPA</strong><br>
-  PDF = abre direto no navegador &nbsp;|&nbsp; Word = abre no visualizador online<br>
+  PDF = abre direto no visualizador do navegador &nbsp;|&nbsp; Word = abre no visualizador online<br>
   Trabalhos de Licenciatura em Ciências Naturais — Cametá/PA
 </footer>
 
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  // ⚙️ Confirme os dados do repositório
   const REPO_USUARIO = "bielsshdropnet-ai";
   const REPO_NOME = "meus-trabalhos";
   const BRANCHES_POSSIVEIS = ["main", "master"];
@@ -409,6 +408,26 @@
   const busca = document.getElementById("busca");
   const contadorEl = document.getElementById("contador-total");
   let todosTrabalhos = [];
+
+  // 🔑 Converte link do GitHub para link que ABRE (não baixa)
+  function getLinkAbrir(branch, caminho, tipo) {
+    // raw.githack.com → serve sem forçar download
+    const githackUrl = `https://raw.githack.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${caminho}`;
+    
+    if (tipo === "pdf") {
+      // PDF → abre direto no navegador
+      return githackUrl + "#view=FitH";
+    } else if (tipo === "word") {
+      // Word → abre no visualizador da Microsoft
+      return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(githackUrl)}`;
+    }
+    return githackUrl;
+  }
+
+  // Link para pré-visualização do PDF (raw.githubusercontent.com funciona para PDF.js)
+  function getLinkRaw(branch, caminho) {
+    return `https://raw.githubusercontent.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${caminho}`;
+  }
 
   function formatarTitulo(caminho) {
     const nomeArquivo = caminho.split("/").pop();
@@ -474,7 +493,9 @@
         titulo: formatarTitulo(item.path),
         ano: extrairAno(item.path),
         tipo: getTipoArquivo(item.path),
-        url: `https://raw.githubusercontent.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${item.path}`,
+        caminho: item.path,
+        branch: branch,
+        rawUrl: getLinkRaw(branch, item.path),
       }))
       .sort((a, b) => b.ano.localeCompare(a.ano, "pt-BR") || a.titulo.localeCompare(b.titulo, "pt-BR"));
   }
@@ -491,7 +512,7 @@
     return [];
   }
 
-  // 📋 Renderiza — PDF e Word ABRINDO DIRETO, sem baixar!
+  // 📋 Renderiza — PDF e Word ABREM DIRETO, sem baixar!
   function renderizarLista(lista) {
     conteudo.innerHTML = "";
 
@@ -506,23 +527,11 @@
     lista.forEach(t => {
       const card = document.createElement("a");
       
-      // 🔑 Ajusta o link para ABRIR, NÃO baixar
-      if (t.tipo === "pdf") {
-        // PDF → abre direto no navegador (visualizador nativo)
-        card.href = t.url + "#view=FitH";
-        card.target = "_blank";
-        card.rel = "noopener noreferrer";
-      } else if (t.tipo === "word") {
-        // Word → abre no visualizador online da Microsoft
-        card.href = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(t.url)}`;
-        card.target = "_blank";
-        card.rel = "noopener noreferrer";
-      } else {
-        card.href = t.url;
-        card.target = "_blank";
-        card.rel = "noopener noreferrer";
-      }
-
+      // 🔑 Link que ABRE, NÃO baixa!
+      card.href = getLinkAbrir(t.branch, t.caminho, t.tipo);
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+      
       card.className = "link-acesso";
       card.title = `Abrir: ${t.titulo}`;
 
@@ -531,7 +540,7 @@
 
       card.innerHTML = `
         <div class="card-trabalho ${ehWord ? 'word' : ''}">
-          <div class="preview-pdf ${ehWord ? 'preview-word' : ''}" data-url="${ehPdf ? t.url : ''}">
+          <div class="preview-pdf ${ehWord ? 'preview-word' : ''}" data-url="${ehPdf ? t.rawUrl : ''}">
             ${ehPdf 
               ? `<div style="text-align:center;color:var(--texto-suave);"><span style="font-size:2rem;">📄</span><br>Carregando pré-visualização…</div>` 
               : ehWord
