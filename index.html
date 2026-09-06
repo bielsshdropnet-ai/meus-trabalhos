@@ -237,10 +237,8 @@
   </div>
   <h1>Acervo acadêmico</h1>
   <p class="curso">Trabalhos produzidos ao longo do curso</p>
-  <p class="desc">Relatórios de aula, relatos de experiência e relatórios de estágio supervisionado, reunidos e organizados por categoria.</p>
+  <p class="desc">Basta subir o arquivo em qualquer lugar do repositório — ele aparece aqui automaticamente.</p>
 </header>
-
-<nav class="indice" id="indice"></nav>
 
 <main id="conteudo"></main>
 
@@ -252,29 +250,23 @@
   /*
     COMO ADICIONAR UM NOVO TRABALHO
     --------------------------------
-    Não precisa mexer neste arquivo. Só:
-    1. Entre na pasta "arquivos/relatorios", "arquivos/relatos" ou "arquivos/estagio"
-       (dependendo do tipo de trabalho) dentro do repositório no GitHub.
-    2. Faça upload do PDF ali dentro.
-    3. Pronto — na próxima vez que alguém abrir o site, o arquivo já aparece
-       sozinho na categoria certa. O nome do trabalho exibido é o próprio
-       nome do arquivo (troque "-" ou "_" por espaço para ficar mais bonito,
+    Não precisa mexer neste arquivo, nem seguir pasta nenhuma. Só:
+    1. Sobe o PDF (ou Word) em qualquer lugar do repositório no GitHub —
+       pode até jogar direto na raiz, junto com o index.html.
+    2. Pronto. Na próxima vez que alguém abrir o site, o arquivo já aparece
+       sozinho na lista. O título exibido é o próprio nome do arquivo
+       (troque "-" ou "_" por espaço para ficar mais bonito antes de subir,
        ex: "relatorio-microscopia-2024.pdf" vira "Relatorio Microscopia 2024").
   */
 
   const REPO_USUARIO = "bielsshdropnet-ai";
   const REPO_NOME = "meus-trabalhos";
-
-  const CATEGORIAS = [
-    { id: "relatorios", categoria: "Relatórios", legenda: "Relatórios de aulas, práticas e disciplinas do curso.", pasta: "arquivos/relatorios" },
-    { id: "relatos", categoria: "Relatos de experiência", legenda: "Vivências e reflexões registradas durante o curso.", pasta: "arquivos/relatos" },
-    { id: "estagio", categoria: "Estágio supervisionado", legenda: "Relatórios de supervisão realizados nas escolas.", pasta: "arquivos/estagio" },
-  ];
+  const REPO_BRANCH = "main";
 
   const conteudo = document.getElementById("conteudo");
-  const indice = document.getElementById("indice");
 
-  function formatarTitulo(nomeArquivo) {
+  function formatarTitulo(caminho) {
+    const nomeArquivo = caminho.split("/").pop();
     return nomeArquivo
       .replace(/\.[^.]+$/, "")
       .replace(/[-_]+/g, " ")
@@ -286,99 +278,70 @@
     return m ? m[1] : "";
   }
 
-  async function buscarArquivos(pasta) {
-    const url = `https://api.github.com/repos/${REPO_USUARIO}/${REPO_NOME}/contents/${pasta}`;
+  async function buscarTodosArquivos() {
+    // varre o repositório inteiro, em qualquer pasta, de uma vez só
+    const url = `https://api.github.com/repos/${REPO_USUARIO}/${REPO_NOME}/git/trees/${REPO_BRANCH}?recursive=1`;
     try {
       const resp = await fetch(url);
       if (!resp.ok) return [];
       const dados = await resp.json();
-      if (!Array.isArray(dados)) return [];
-      return dados
-        .filter(item => item.type === "file" && /\.(pdf|docx?|doc)$/i.test(item.name))
+      if (!Array.isArray(dados.tree)) return [];
+      return dados.tree
+        .filter(item => item.type === "blob" && /\.(pdf|docx?|doc)$/i.test(item.path))
         .map(item => ({
-          titulo: formatarTitulo(item.name),
-          ano: extrairAno(item.name),
-          url: item.download_url,
+          titulo: formatarTitulo(item.path),
+          ano: extrairAno(item.path),
+          url: `https://raw.githubusercontent.com/${REPO_USUARIO}/${REPO_NOME}/${REPO_BRANCH}/${item.path}`,
         }))
         .sort((a, b) => a.titulo.localeCompare(b.titulo, "pt-BR"));
     } catch (e) {
-      console.error("Não foi possível carregar", pasta, e);
+      console.error("Não foi possível carregar os arquivos", e);
       return [];
     }
   }
 
   async function montarSite() {
-    for (const bloco of CATEGORIAS) {
-      const link = document.createElement("a");
-      link.href = "#" + bloco.id;
-      link.textContent = bloco.categoria;
-      indice.appendChild(link);
+    const carregando = document.createElement("p");
+    carregando.className = "vazio";
+    carregando.textContent = "Carregando…";
+    conteudo.appendChild(carregando);
 
-      const secao = document.createElement("section");
-      secao.className = "categoria";
-      secao.id = bloco.id;
+    const trabalhos = await buscarTodosArquivos();
+    conteudo.innerHTML = "";
 
-      const cabecalho = document.createElement("div");
-      cabecalho.className = "categoria-cabecalho";
-
-      const h2 = document.createElement("h2");
-      h2.textContent = bloco.categoria;
-      cabecalho.appendChild(h2);
-
-      const contagem = document.createElement("span");
-      contagem.className = "contagem";
-      contagem.textContent = "carregando…";
-      cabecalho.appendChild(contagem);
-
-      secao.appendChild(cabecalho);
-
-      const legenda = document.createElement("p");
-      legenda.className = "legenda";
-      legenda.textContent = bloco.legenda;
-      secao.appendChild(legenda);
-
-      const marcador = document.createElement("div");
-      secao.appendChild(marcador);
-
-      conteudo.appendChild(secao);
-
-      const trabalhos = await buscarArquivos(bloco.pasta);
-
-      contagem.textContent = trabalhos.length === 1 ? "1 item" : `${trabalhos.length} itens`;
-
-      if (trabalhos.length === 0) {
-        const vazio = document.createElement("p");
-        vazio.className = "vazio";
-        vazio.textContent = "Nenhum trabalho adicionado ainda.";
-        marcador.replaceWith(vazio);
-      } else {
-        const lista = document.createElement("ul");
-        lista.className = "lista";
-
-        trabalhos.forEach(t => {
-          const item = document.createElement("li");
-          const a = document.createElement("a");
-          a.href = t.url;
-          a.target = "_blank";
-          a.rel = "noopener";
-
-          const span = document.createElement("span");
-          span.className = "titulo";
-          span.textContent = t.titulo;
-
-          const meta = document.createElement("span");
-          meta.className = "meta";
-          meta.textContent = t.ano;
-
-          a.appendChild(span);
-          a.appendChild(meta);
-          item.appendChild(a);
-          lista.appendChild(item);
-        });
-
-        marcador.replaceWith(lista);
-      }
+    if (trabalhos.length === 0) {
+      const vazio = document.createElement("p");
+      vazio.className = "vazio";
+      vazio.textContent = "Nenhum trabalho adicionado ainda.";
+      conteudo.appendChild(vazio);
+      return;
     }
+
+    const lista = document.createElement("ul");
+    lista.className = "lista";
+
+    trabalhos.forEach(t => {
+      const item = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = t.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+
+      const span = document.createElement("span");
+      span.className = "titulo";
+      span.textContent = t.titulo;
+
+      const meta = document.createElement("span");
+      meta.className = "meta";
+      meta.textContent = t.ano;
+
+      a.appendChild(span);
+      a.appendChild(meta);
+      item.appendChild(a);
+      lista.appendChild(item);
+    });
+
+    conteudo.appendChild(lista);
   }
 
   montarSite();
