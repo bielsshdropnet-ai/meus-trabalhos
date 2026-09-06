@@ -379,7 +379,7 @@
   </div>
   <h1>Acervo Acadêmico</h1>
   <p class="curso">Repositório de Trabalhos — Estágio Supervisionado e Produções Acadêmicas</p>
-  <p class="desc">PDF e Word abrem direto para visualização — sem baixar!</p>
+  <p class="desc">PDF abre direto no navegador. Word abre para visualização. Sem download forçado!</p>
 </header>
 
 <div class="cabecalho-acoes">
@@ -393,7 +393,7 @@
 
 <footer>
   <strong>Acervo Acadêmico — Ciências da Natureza | UFPA</strong><br>
-  PDF = abre direto no visualizador do navegador &nbsp;|&nbsp; Word = abre no visualizador online<br>
+  PDF = abre direto no visualizador &nbsp;|&nbsp; Word = abre para visualização (sem branco!)<br>
   Trabalhos de Licenciatura em Ciências Naturais — Cametá/PA
 </footer>
 
@@ -409,19 +409,9 @@
   const contadorEl = document.getElementById("contador-total");
   let todosTrabalhos = [];
 
-  // 🔑 Converte link do GitHub para link que ABRE (não baixa)
-  function getLinkAbrir(branch, caminho, tipo) {
-    // raw.githack.com → serve sem forçar download
-    const githackUrl = `https://raw.githack.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${caminho}`;
-    
-    if (tipo === "pdf") {
-      // PDF → abre direto no navegador
-      return githackUrl + "#view=FitH";
-    } else if (tipo === "word") {
-      // Word → abre no visualizador da Microsoft
-      return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(githackUrl)}`;
-    }
-    return githackUrl;
+  // 🔑 Link que ABRE, não baixa — usando raw.githack.com
+  function getLinkVisualizar(branch, caminho) {
+    return `https://raw.githack.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${caminho}`;
   }
 
   // Link para pré-visualização do PDF (raw.githubusercontent.com funciona para PDF.js)
@@ -496,6 +486,7 @@
         caminho: item.path,
         branch: branch,
         rawUrl: getLinkRaw(branch, item.path),
+        visualizarUrl: getLinkVisualizar(branch, item.path),
       }))
       .sort((a, b) => b.ano.localeCompare(a.ano, "pt-BR") || a.titulo.localeCompare(b.titulo, "pt-BR"));
   }
@@ -512,7 +503,7 @@
     return [];
   }
 
-  // 📋 Renderiza — PDF e Word ABREM DIRETO, sem baixar!
+  // 📋 Renderiza — PDF e Word abrem direto, sem branco e sem forçar download!
   function renderizarLista(lista) {
     conteudo.innerHTML = "";
 
@@ -527,11 +518,19 @@
     lista.forEach(t => {
       const card = document.createElement("a");
       
-      // 🔑 Link que ABRE, NÃO baixa!
-      card.href = getLinkAbrir(t.branch, t.caminho, t.tipo);
+      // 🔑 AMBOS abrem direto no navegador — sem passar pelo Office Online (que estava branco!)
+      if (t.tipo === "pdf") {
+        // PDF → abre direto no visualizador do navegador
+        card.href = t.visualizarUrl + "#view=FitH";
+      } else if (t.tipo === "word") {
+        // Word → abre direto no navegador (não mais no Office Online que ficava branco!)
+        card.href = t.visualizarUrl;
+      } else {
+        card.href = t.visualizarUrl;
+      }
+      
       card.target = "_blank";
       card.rel = "noopener noreferrer";
-      
       card.className = "link-acesso";
       card.title = `Abrir: ${t.titulo}`;
 
@@ -544,7 +543,7 @@
             ${ehPdf 
               ? `<div style="text-align:center;color:var(--texto-suave);"><span style="font-size:2rem;">📄</span><br>Carregando pré-visualização…</div>` 
               : ehWord
-                ? `<span class="icone-word">📘</span><span class="texto-preview-word">Documento Word<br>Abre direto no visualizador</span>`
+                ? `<span class="icone-word">📘</span><span class="texto-preview-word">Documento Word<br>Abre direto para visualização</span>`
                 : `<span style="font-size:2rem;">📎</span>`
             }
           </div>
