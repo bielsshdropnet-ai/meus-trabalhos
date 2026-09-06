@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Acervo Acadêmico — Ciências da Natureza | UFPA</title>
+<!-- PDF.js para pré-visualização de PDFs -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
   :root {
-    /* 🎨 Paleta alinhada com Ciências da Natureza */
     --verde-escuro: #2C5F2D;
     --verde-medio: #4A7C23;
     --verde-claro: #74A942;
@@ -18,7 +19,6 @@
     --folha-clara: #E2EFDB;
     --texto-escuro: #1E2E1F;
     --texto-suave: #4F6651;
-    --dourado-atom: #D4B86A;
     --borda: #C8D8BC;
     --sombra: rgba(44, 95, 45, 0.12);
     --sombra-forte: rgba(44, 95, 45, 0.18);
@@ -33,7 +33,6 @@
     color: var(--texto-escuro);
     font-family: 'Segoe UI', system-ui, -apple-system, 'Palatino Linotype', Georgia, serif;
     line-height: 1.6;
-    /* Padrão sutil de folhas */
     background-image:
       radial-gradient(circle at 1px 1px, rgba(74, 124, 35, 0.05) 1px, transparent 0),
       url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5c-3 6-10 10-10 18 0 8 7 12 10 18 3-6 10-10 10-18 0-8-7-12-10-18z' fill='none' stroke='%234A7C23' stroke-width='0.5' opacity='0.08'/%3E%3C/svg%3E");
@@ -42,12 +41,10 @@
     min-height: 100vh;
   }
 
-  /* ===== Cabeçalho ===== */
   header {
-    max-width: 860px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 3rem 1.5rem 2rem;
-    position: relative;
     animation: entradaSuave 0.8s ease-out;
   }
 
@@ -65,7 +62,6 @@
     border-bottom: 2px solid var(--borda);
   }
 
-  /* Logo Ciências da Natureza */
   .logo-container {
     width: 64px;
     height: 64px;
@@ -125,9 +121,8 @@
     line-height: 1.7;
   }
 
-  /* ===== Barra de Busca ===== */
   .cabecalho-acoes {
-    max-width: 860px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 0 1.5rem 1.5rem;
   }
@@ -169,9 +164,8 @@
     box-shadow: 0 2px 6px var(--sombra);
   }
 
-  /* ===== Conteúdo Principal ===== */
   main {
-    max-width: 860px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 1rem 1.5rem 6rem;
     animation: conteudoAparece 0.8s ease-out 0.2s both;
@@ -182,85 +176,102 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ===== Lista de Trabalhos ===== */
-  ul.lista {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  /* ===== CARD COM PRÉ-VISUALIZAÇÃO ===== */
+  .grade-trabalhos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
   }
 
-  ul.lista li {
-    margin-bottom: 0.75rem;
-    border-radius: var(--raio);
+  .card-trabalho {
     background: #fff;
-    border-left: 4px solid var(--verde-suave);
-    box-shadow: 0 2px 10px var(--sombra);
-    transition: all 0.3s ease;
-  }
-
-  ul.lista li:hover {
-    border-left-color: var(--azul-laboratorio);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px var(--sombra-forte);
-    background: linear-gradient(90deg, rgba(240, 248, 232, 0.6) 0%, #fff 100%);
-  }
-
-  ul.lista a {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.25rem 1.5rem;
-    text-decoration: none;
-    color: var(--texto-escuro);
     border-radius: var(--raio);
-  }
-
-  ul.lista a:hover .titulo {
-    color: var(--azul-laboratorio);
-  }
-
-  .item-esquerda {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .icone-tipo {
-    font-size: 1.35rem;
-    flex-shrink: 0;
-  }
-
-  .titulo {
-    font-size: 1.08rem;
-    font-weight: 500;
+    border-left: 4px solid var(--verde-suave);
+    box-shadow: 0 3px 12px var(--sombra);
     overflow: hidden;
-    text-overflow: ellipsis;
+    transition: all 0.3s ease;
+    cursor: pointer;
   }
 
-  .meta {
+  .card-trabalho:hover {
+    transform: translateY(-4px);
+    border-left-color: var(--azul-laboratorio);
+    box-shadow: 0 8px 25px var(--sombra-forte);
+  }
+
+  .preview-pdf {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    font-family: 'Courier New', monospace;
-    font-size: 0.85rem;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--borda);
+    position: relative;
+  }
+
+  .preview-pdf canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .preview-pdf .carregando-pdf {
     color: var(--texto-suave);
-    white-space: nowrap;
-    flex-shrink: 0;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .preview-pdf .icone-pdf {
+    font-size: 3rem;
+    opacity: 0.4;
+  }
+
+  .info-card {
+    padding: 1.25rem;
+  }
+
+  .tipo-arquivo {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: var(--folha-clara);
+    color: var(--verde-escuro);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .titulo-card {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--texto-escuro);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+  }
+
+  .meta-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--texto-suave);
   }
 
   .tag-ano {
     background: linear-gradient(135deg, var(--azul-suave) 0%, var(--azul-claro) 100%);
     color: var(--azul-laboratorio);
-    padding: 0.3rem 0.7rem;
-    border-radius: 6px;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
     font-weight: 700;
-    font-size: 0.8rem;
   }
 
-  /* ===== Estados Vazios e Carregamento ===== */
+  .link-acesso {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
   .vazio, .carregando {
     color: var(--texto-suave);
     font-size: 1.1rem;
@@ -284,9 +295,8 @@
     50% { opacity: 0.5; }
   }
 
-  /* ===== Rodapé ===== */
   footer {
-    max-width: 860px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 2rem 1.5rem 3rem;
     color: var(--texto-suave);
@@ -302,14 +312,12 @@
     color: var(--verde-escuro);
   }
 
-  /* ===== Responsividade ===== */
   @media (max-width: 640px) {
     header { padding: 2rem 1.25rem 1.5rem; }
     header h1 { font-size: 2rem; }
     .marca { flex-direction: column; text-align: center; gap: 0.8rem; }
     main { padding: 1rem 1.25rem 4rem; }
-    ul.lista a { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
-    .meta { width: 100%; justify-content: space-between; }
+    .grade-trabalhos { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -318,7 +326,6 @@
 <header>
   <div class="marca">
     <div class="logo-container">
-      <!-- Ícone: Frasco de laboratório + folha → Ciências da Natureza -->
       <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <path d="M50 20v40c0 8-6 15-14 15s-14-7-14-15v-40h28z" fill="none" stroke="white" stroke-width="5"/>
         <ellipse cx="36" cy="75" rx="14" ry="8" fill="white"/>
@@ -335,7 +342,7 @@
   </div>
   <h1>Acervo Acadêmico</h1>
   <p class="curso">Repositório de Trabalhos — Estágio Supervisionado e Produções Acadêmicas</p>
-  <p class="desc">Seu acervo organizado. Os arquivos aparecem automaticamente assim que são enviados ao repositório. Basta buscar e acessar!</p>
+  <p class="desc">Veja a pré-visualização da primeira página de cada trabalho. Clique para abrir o documento completo!</p>
 </header>
 
 <div class="cabecalho-acoes">
@@ -350,19 +357,14 @@
 <footer>
   <strong>Acervo Acadêmico — Ciências da Natureza | UFPA</strong><br>
   Trabalhos de Licenciatura em Ciências Naturais — Cametá/PA<br>
-  Atualizado automaticamente conforme novos arquivos são adicionados.
+  Clique no card para abrir o documento completo. Pré-visualização gerada automaticamente.
 </footer>
 
 <script>
-  /*
-    📖 INSTRUÇÕES — Adicionar Trabalhos
-    ------------------------------------
-    1. Envie o arquivo (.pdf, .doc, .docx) para o repositório do GitHub
-    2. Use nomes claros: relatorio-estagio-2026.pdf → "Relatorio Estagio 2026"
-    3. Os arquivos carregam SOZINHOS na página! ✨
-  */
+  // Configuração do PDF.js
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  // ⚙️ CONFIGURAÇÃO — Verifique seu repositório
+  // ⚙️ REPOSITÓRIO — Confirme os dados abaixo!
   const REPO_USUARIO = "bielsshdropnet-ai";
   const REPO_NOME = "meus-trabalhos";
   const BRANCHES_POSSIVEIS = ["main", "master"];
@@ -372,7 +374,7 @@
   const contadorEl = document.getElementById("contador-total");
   let todosTrabalhos = [];
 
-  // 📝 Formata o nome do arquivo para exibição
+  // 📝 Formata o nome do arquivo
   function formatarTitulo(caminho) {
     const nomeArquivo = caminho.split("/").pop();
     return nomeArquivo
@@ -381,21 +383,59 @@
       .replace(/\b\w/g, c => c.toUpperCase());
   }
 
-  // 📅 Extrai o ano do nome do arquivo
+  // 📅 Extrai o ano
   function extrairAno(nomeArquivo) {
     const m = nomeArquivo.match(/(20\d{2})/);
     return m ? m[1] : "";
   }
 
-  // 📄 Ícone conforme tipo de arquivo
-  function getIconeArquivo(caminho) {
+  // 📄 Tipo de arquivo
+  function getTipoArquivo(caminho) {
     const ext = caminho.toLowerCase().split(".").pop();
-    if (ext === "pdf") return "📄";
-    if (ext.startsWith("doc")) return "📝";
-    return "📎";
+    if (ext === "pdf") return "PDF";
+    if (ext.startsWith("doc")) return "Word";
+    return "Arquivo";
   }
 
-  // 🔍 Busca arquivos no repositório GitHub
+  // 🖼️ Renderiza a PRIMEIRA PÁGINA do PDF como imagem
+  async function renderizarPrimeiraPagina(pdfUrl, elementoContainer) {
+    try {
+      const loadingTask = pdfjsLib.getDocument({
+        url: pdfUrl,
+        cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+        cMapPacked: true,
+      });
+      const pdf = await loadingTask.promise;
+      const pagina = await pdf.getPage(1);
+      
+      const escala = 1.5;
+      const viewport = pagina.getViewport({ scale: escala });
+      
+      const canvas = document.createElement("canvas");
+      const contexto = canvas.getContext("2d");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      
+      await pagina.render({
+        canvasContext: contexto,
+        viewport: viewport
+      }).promise;
+
+      // Ajusta para caber no card
+      canvas.style.maxWidth = "100%";
+      canvas.style.height = "100%";
+      canvas.style.objectFit = "cover";
+      
+      elementoContainer.innerHTML = "";
+      elementoContainer.appendChild(canvas);
+      
+    } catch (erro) {
+      console.warn("Não foi possível carregar pré-visualização:", erro);
+      elementoContainer.innerHTML = `<div class="carregando-pdf"><span class="icone-pdf">📄</span><br>Pré-visualização indisponível</div>`;
+    }
+  }
+
+  // 🔍 Busca arquivos no GitHub
   async function buscarNaBranch(branch) {
     const url = `https://api.github.com/repos/${REPO_USUARIO}/${REPO_NOME}/git/trees/${branch}?recursive=1`;
     const resp = await fetch(url);
@@ -407,7 +447,7 @@
       .map(item => ({
         titulo: formatarTitulo(item.path),
         ano: extrairAno(item.path),
-        icone: getIconeArquivo(item.path),
+        tipo: getTipoArquivo(item.path),
         url: `https://raw.githubusercontent.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${item.path}`,
       }))
       .sort((a, b) => b.ano.localeCompare(a.ano, "pt-BR") || a.titulo.localeCompare(b.titulo, "pt-BR"));
@@ -425,41 +465,61 @@
     return [];
   }
 
-  // 📋 Renderiza a lista de trabalhos
+  // 📋 Renderiza os CARDS com pré-visualização
   function renderizarLista(lista) {
     conteudo.innerHTML = "";
 
     if (lista.length === 0) {
-      conteudo.innerHTML = `<p class="vazio">Nenhum trabalho encontrado. ${todosTrabalhos.length > 0 ? 'Tente outro termo de busca.' : 'Envie arquivos .pdf, .doc ou .docx para o repositório e eles aparecerão aqui!'}</p>`;
+      conteudo.innerHTML = `<p class="vazio">Nenhum trabalho encontrado. ${todosTrabalhos.length > 0 ? 'Tente outro termo de busca.' : 'Envie arquivos .pdf, .doc ou .docx para o repositório!'}</p>`;
       return;
     }
 
-    const ul = document.createElement("ul");
-    ul.className = "lista";
+    const grade = document.createElement("div");
+    grade.className = "grade-trabalhos";
 
     lista.forEach(t => {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = t.url;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.title = `Abrir: ${t.titulo}`;
+      const card = document.createElement("a");
+      card.href = t.url;
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+      card.className = "link-acesso";
+      card.title = `Abrir: ${t.titulo}`;
 
-      a.innerHTML = `
-        <div class="item-esquerda">
-          <span class="icone-tipo">${t.icone}</span>
-          <span class="titulo">${t.titulo}</span>
-        </div>
-        <div class="meta">
-          ${t.ano ? `<span class="tag-ano">${t.ano}</span>` : ""}
+      const ehPdf = t.tipo === "PDF";
+
+      card.innerHTML = `
+        <div class="card-trabalho">
+          <div class="preview-pdf" data-url="${ehPdf ? t.url : ""}">
+            ${ehPdf 
+              ? `<div class="carregando-pdf">📄<br>Carregando pré-visualização…</div>` 
+              : `<div class="carregando-pdf"><span class="icone-pdf">📝</span><br>Documento Word</div>`
+            }
+          </div>
+          <div class="info-card">
+            <span class="tipo-arquivo">${t.tipo}</span>
+            <h3 class="titulo-card">${t.titulo}</h3>
+            <div class="meta-card">
+              ${t.ano ? `<span class="tag-ano">${t.ano}</span>` : ""}
+              <span>Clique para abrir ↗</span>
+            </div>
+          </div>
         </div>
       `;
 
-      li.appendChild(a);
-      ul.appendChild(li);
+      grade.appendChild(card);
+
+      // Carrega pré-visualização do PDF depois de inserir na página
+      if (ehPdf) {
+        setTimeout(() => {
+          const previewEl = card.querySelector(".preview-pdf");
+          if (previewEl && previewEl.dataset.url) {
+            renderizarPrimeiraPagina(previewEl.dataset.url, previewEl);
+          }
+        }, 100);
+      }
     });
 
-    conteudo.appendChild(ul);
+    conteudo.appendChild(grade);
   }
 
   // 🔎 Filtro em tempo real
@@ -475,34 +535,26 @@
     renderizarLista(filtrados);
   }
 
-  // 🚀 Inicialização — CARREGA TUDO AUTOMATICAMENTE
+  // 🚀 INICIALIZA
   async function montarSite() {
-    // Mostra carregamento imediatamente
     conteudo.innerHTML = `<p class="carregando">Carregando trabalhos…</p>`;
 
     let trabalhos = [];
     try {
       trabalhos = await buscarTodosArquivos();
     } catch (e) {
-      conteudo.innerHTML = `<p class="vazio">⚠️ Não foi possível carregar os arquivos. Verifique a conexão e recarregue a página.</p>`;
+      conteudo.innerHTML = `<p class="vazio">⚠️ Não foi possível carregar os arquivos. Verifique a conexão e recarregue.</p>`;
       return;
     }
 
     todosTrabalhos = trabalhos;
-    
-    // Atualiza contador
     contadorEl.textContent = `${trabalhos.length} trabalho${trabalhos.length !== 1 ? 's' : ''}`;
-    
-    // Renderiza a lista com os arquivos já existentes
     renderizarLista(trabalhos);
 
-    // Ativa busca em tempo real
     busca.addEventListener("input", (e) => filtrarTrabalhos(e.target.value));
   }
 
-  // ⚡ INICIA ASSIM QUE A PÁGINA CARREGA
   document.addEventListener("DOMContentLoaded", montarSite);
-  // Fallback: executa imediatamente
   montarSite();
 </script>
 
