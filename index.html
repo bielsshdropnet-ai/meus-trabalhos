@@ -201,7 +201,6 @@
     box-shadow: 0 8px 25px var(--sombra-forte);
   }
 
-  /* Card Word — borda e cor diferenciada */
   .card-trabalho.word {
     border-left-color: var(--azul-word);
   }
@@ -227,7 +226,6 @@
     height: auto;
   }
 
-  /* Área Word — destaque visual */
   .preview-word {
     background: linear-gradient(135deg, #E8F0FA 0%, #D4E3F7 100%);
     flex-direction: column;
@@ -296,6 +294,12 @@
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
     font-weight: 700;
+  }
+
+  .abrir-direto {
+    color: var(--azul-laboratorio);
+    font-weight: 600;
+    font-size: 0.75rem;
   }
 
   .link-acesso {
@@ -375,7 +379,7 @@
   </div>
   <h1>Acervo Acadêmico</h1>
   <p class="curso">Repositório de Trabalhos — Estágio Supervisionado e Produções Acadêmicas</p>
-  <p class="desc">PDF mostra pré-visualização da 1ª página. Word aparece com ícone destacado. Clique para abrir o documento completo!</p>
+  <p class="desc">PDF mostra pré-visualização da 1ª página. Word abre no visualizador online. Clique para ver — sem baixar!</p>
 </header>
 
 <div class="cabecalho-acoes">
@@ -389,14 +393,14 @@
 
 <footer>
   <strong>Acervo Acadêmico — Ciências da Natureza | UFPA</strong><br>
-  Trabalhos de Licenciatura em Ciências Naturais — Cametá/PA<br>
-  PDF = pré-visualização da 1ª página | Word = documento para download
+  PDF = abre direto no navegador &nbsp;|&nbsp; Word = abre no visualizador online<br>
+  Trabalhos de Licenciatura em Ciências Naturais — Cametá/PA
 </footer>
 
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  // ⚙️ CONFIRME SE OS DADOS DO REPOSITÓRIO ESTÃO CORRETOS
+  // ⚙️ Confirme os dados do repositório
   const REPO_USUARIO = "bielsshdropnet-ai";
   const REPO_NOME = "meus-trabalhos";
   const BRANCHES_POSSIVEIS = ["main", "master"];
@@ -426,7 +430,7 @@
     return "outro";
   }
 
-  // 🖼️ Renderiza 1ª página do PDF
+  // 🖼️ Pré-visualização da 1ª página do PDF
   async function renderizarPrimeiraPagina(pdfUrl, elementoContainer) {
     try {
       const loadingTask = pdfjsLib.getDocument({
@@ -487,7 +491,7 @@
     return [];
   }
 
-  // 📋 RENDERIZA — PDF com pré-visualização | Word com card completo
+  // 📋 Renderiza — PDF e Word ABRINDO DIRETO, sem baixar!
   function renderizarLista(lista) {
     conteudo.innerHTML = "";
 
@@ -501,9 +505,24 @@
 
     lista.forEach(t => {
       const card = document.createElement("a");
-      card.href = t.url;
-      card.target = "_blank";
-      card.rel = "noopener noreferrer";
+      
+      // 🔑 Ajusta o link para ABRIR, NÃO baixar
+      if (t.tipo === "pdf") {
+        // PDF → abre direto no navegador (visualizador nativo)
+        card.href = t.url + "#view=FitH";
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+      } else if (t.tipo === "word") {
+        // Word → abre no visualizador online da Microsoft
+        card.href = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(t.url)}`;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+      } else {
+        card.href = t.url;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+      }
+
       card.className = "link-acesso";
       card.title = `Abrir: ${t.titulo}`;
 
@@ -516,16 +535,16 @@
             ${ehPdf 
               ? `<div style="text-align:center;color:var(--texto-suave);"><span style="font-size:2rem;">📄</span><br>Carregando pré-visualização…</div>` 
               : ehWord
-                ? `<span class="icone-word">📘</span><span class="texto-preview-word">Documento Word<br>Clique para baixar</span>`
+                ? `<span class="icone-word">📘</span><span class="texto-preview-word">Documento Word<br>Abre direto no visualizador</span>`
                 : `<span style="font-size:2rem;">📎</span>`
             }
           </div>
           <div class="info-card">
-            <span class="tipo-arquivo ${t.tipo}">${ehPdf ? 'PDF' : ehWord ? 'Word' : 'Arquivo'}</span>
+            <span class="tipo-arquivo ${t.tipo}">${ehPdf ? 'PDF — Abre direto' : ehWord ? 'Word — Abre direto' : 'Arquivo'}</span>
             <h3 class="titulo-card">${t.titulo}</h3>
             <div class="meta-card">
               ${t.ano ? `<span class="tag-ano">${t.ano}</span>` : ""}
-              <span style="font-size:0.75rem;">Clique para abrir ↗</span>
+              <span class="abrir-direto">Abre direto ↗</span>
             </div>
           </div>
         </div>
@@ -533,7 +552,7 @@
 
       grade.appendChild(card);
 
-      // Carrega pré-visualização só do PDF
+      // Carrega pré-visualização do PDF
       if (ehPdf) {
         setTimeout(() => {
           const previewEl = card.querySelector(".preview-pdf");
