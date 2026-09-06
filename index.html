@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderno de Campo — Ciências Naturais</title>
+<style>
+  :root {
+    --papel: #F2F1E8;
+    --musgo: #2E3B2E;
+    --musgo-suave: #5C6B57;
+    --terra: #A85C2C;
+    --terra-clara: #C97A2B;
+    --linha: #D6D3C2;
+    --folha: #6E8B5E;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--papel);
+    color: var(--musgo);
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    line-height: 1.55;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(46,59,46,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+
+  header {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 2.5rem;
+    position: relative;
+    border-top: 3px double var(--musgo);
+  }
+
+  .marca {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .logo {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    color: var(--folha);
+  }
+
+  .marca-texto {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--musgo-suave);
+  }
+
+  .marca-texto strong {
+    display: block;
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    font-size: 1rem;
+    color: var(--terra);
+    font-weight: 600;
+  }
+
+  header h1 {
+    font-size: 2.5rem;
+    font-weight: 500;
+    margin: 0 0 0.5rem;
+    max-width: 18ch;
+  }
+
+  header .curso {
+    color: var(--terra);
+    font-size: 1rem;
+    margin: 0 0 1rem;
+  }
+
+  header p.desc {
+    color: var(--musgo-suave);
+    max-width: 48ch;
+    font-size: 1.03rem;
+  }
+
+  nav.indice {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--linha);
+    border-bottom: 1px solid var(--linha);
+  }
+
+  nav.indice a {
+    color: var(--musgo-suave);
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 0.9rem 0;
+    border-bottom: 2px solid transparent;
+  }
+
+  nav.indice a:hover {
+    color: var(--terra);
+    border-bottom-color: var(--terra-clara);
+  }
+
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+  }
+
+  .categoria {
+    margin-bottom: 3.5rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .categoria-cabecalho {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .categoria h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--terra);
+    margin: 0;
+  }
+
+  .categoria .contagem {
+    font-family: 'Courier New', monospace;
+    font-size: 0.78rem;
+    color: var(--musgo-suave);
+  }
+
+  .categoria .legenda {
+    color: var(--musgo-suave);
+    font-size: 0.92rem;
+    margin: 0 0 1.2rem;
+    max-width: 52ch;
+  }
+
+  ul.lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  ul.lista li {
+    border-left: 2px solid var(--linha);
+    transition: border-color 0.15s ease;
+  }
+
+  ul.lista li:hover {
+    border-left-color: var(--folha);
+  }
+
+  ul.lista a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    text-decoration: none;
+    color: var(--musgo);
+  }
+
+  ul.lista a:hover .titulo {
+    color: var(--terra);
+  }
+
+  ul.lista a:hover .titulo::after {
+    content: "↗";
+    margin-left: 0.5rem;
+    font-size: 0.85em;
+  }
+
+  .titulo {
+    font-size: 1.05rem;
+  }
+
+  .meta {
+    font-family: 'Courier New', monospace;
+    font-size: 0.78rem;
+    color: var(--musgo-suave);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .vazio {
+    color: var(--musgo-suave);
+    font-size: 0.92rem;
+    padding: 0.9rem 1rem;
+    border-left: 2px dashed var(--linha);
+  }
+
+  footer {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+    color: var(--musgo-suave);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--linha);
+    padding-top: 1.5rem;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 2.5rem 1.25rem 2rem; }
+    header h1 { font-size: 2rem; }
+    main { padding: 2rem 1.25rem 4rem; }
+    ul.lista a { flex-direction: column; gap: 0.15rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="marca">
+    <svg class="logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- folha -->
+      <path d="M50 12C34 20 22 34 22 52c0 14 10 26 24 30 4-16 4-32 0-48 10 10 16 24 14 38 14-6 22-18 22-32C82 30 68 18 50 12Z"
+            stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" fill="none"/>
+      <path d="M46 34c-2 16-2 32 2 48" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      <!-- molécula sobreposta -->
+      <circle cx="74" cy="70" r="6" stroke="currentColor" stroke-width="3"/>
+      <circle cx="90" cy="60" r="5" stroke="currentColor" stroke-width="3"/>
+      <circle cx="88" cy="82" r="5" stroke="currentColor" stroke-width="3"/>
+      <path d="M79 68l8-6M78 74l7 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    </svg>
+    <span class="marca-texto">Universidade Federal do Pará<strong>Ciências Naturais</strong></span>
+  </div>
+  <h1>Acervo acadêmico</h1>
+  <p class="curso">Trabalhos produzidos ao longo do curso</p>
+  <p class="desc">Relatórios de aula, relatos de experiência e relatórios de estágio supervisionado, reunidos e organizados por categoria.</p>
+</header>
+
+<nav class="indice" id="indice"></nav>
+
+<main id="conteudo"></main>
+
+<footer>
+  Ciências Naturais — Universidade Federal do Pará. Acervo atualizado conforme novos trabalhos são adicionados.
+</footer>
+
+<script>
+  /*
+    COMO ADICIONAR UM NOVO TRABALHO
+    --------------------------------
+    Não precisa mexer neste arquivo. Só:
+    1. Entre na pasta "arquivos/relatorios", "arquivos/relatos" ou "arquivos/estagio"
+       (dependendo do tipo de trabalho) dentro do repositório no GitHub.
+    2. Faça upload do PDF ali dentro.
+    3. Pronto — na próxima vez que alguém abrir o site, o arquivo já aparece
+       sozinho na categoria certa. O nome do trabalho exibido é o próprio
+       nome do arquivo (troque "-" ou "_" por espaço para ficar mais bonito,
+       ex: "relatorio-microscopia-2024.pdf" vira "Relatorio Microscopia 2024").
+  */
+
+  const REPO_USUARIO = "bielsshdropnet-ai";
+  const REPO_NOME = "meus-trabalhos";
+
+  const CATEGORIAS = [
+    { id: "relatorios", categoria: "Relatórios", legenda: "Relatórios de aulas, práticas e disciplinas do curso.", pasta: "arquivos/relatorios" },
+    { id: "relatos", categoria: "Relatos de experiência", legenda: "Vivências e reflexões registradas durante o curso.", pasta: "arquivos/relatos" },
+    { id: "estagio", categoria: "Estágio supervisionado", legenda: "Relatórios de supervisão realizados nas escolas.", pasta: "arquivos/estagio" },
+  ];
+
+  const conteudo = document.getElementById("conteudo");
+  const indice = document.getElementById("indice");
+
+  function formatarTitulo(nomeArquivo) {
+    return nomeArquivo
+      .replace(/\.[^.]+$/, "")
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function extrairAno(nomeArquivo) {
+    const m = nomeArquivo.match(/(20\d{2})/);
+    return m ? m[1] : "";
+  }
+
+  async function buscarArquivos(pasta) {
+    const url = `https://api.github.com/repos/${REPO_USUARIO}/${REPO_NOME}/contents/${pasta}`;
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) return [];
+      const dados = await resp.json();
+      if (!Array.isArray(dados)) return [];
+      return dados
+        .filter(item => item.type === "file" && /\.(pdf|docx?|doc)$/i.test(item.name))
+        .map(item => ({
+          titulo: formatarTitulo(item.name),
+          ano: extrairAno(item.name),
+          url: item.download_url,
+        }))
+        .sort((a, b) => a.titulo.localeCompare(b.titulo, "pt-BR"));
+    } catch (e) {
+      console.error("Não foi possível carregar", pasta, e);
+      return [];
+    }
+  }
+
+  async function montarSite() {
+    for (const bloco of CATEGORIAS) {
+      const link = document.createElement("a");
+      link.href = "#" + bloco.id;
+      link.textContent = bloco.categoria;
+      indice.appendChild(link);
+
+      const secao = document.createElement("section");
+      secao.className = "categoria";
+      secao.id = bloco.id;
+
+      const cabecalho = document.createElement("div");
+      cabecalho.className = "categoria-cabecalho";
+
+      const h2 = document.createElement("h2");
+      h2.textContent = bloco.categoria;
+      cabecalho.appendChild(h2);
+
+      const contagem = document.createElement("span");
+      contagem.className = "contagem";
+      contagem.textContent = "carregando…";
+      cabecalho.appendChild(contagem);
+
+      secao.appendChild(cabecalho);
+
+      const legenda = document.createElement("p");
+      legenda.className = "legenda";
+      legenda.textContent = bloco.legenda;
+      secao.appendChild(legenda);
+
+      const marcador = document.createElement("div");
+      secao.appendChild(marcador);
+
+      conteudo.appendChild(secao);
+
+      const trabalhos = await buscarArquivos(bloco.pasta);
+
+      contagem.textContent = trabalhos.length === 1 ? "1 item" : `${trabalhos.length} itens`;
+
+      if (trabalhos.length === 0) {
+        const vazio = document.createElement("p");
+        vazio.className = "vazio";
+        vazio.textContent = "Nenhum trabalho adicionado ainda.";
+        marcador.replaceWith(vazio);
+      } else {
+        const lista = document.createElement("ul");
+        lista.className = "lista";
+
+        trabalhos.forEach(t => {
+          const item = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = t.url;
+          a.target = "_blank";
+          a.rel = "noopener";
+
+          const span = document.createElement("span");
+          span.className = "titulo";
+          span.textContent = t.titulo;
+
+          const meta = document.createElement("span");
+          meta.className = "meta";
+          meta.textContent = t.ano;
+
+          a.appendChild(span);
+          a.appendChild(meta);
+          item.appendChild(a);
+          lista.appendChild(item);
+        });
+
+        marcador.replaceWith(lista);
+      }
+    }
+  }
+
+  montarSite();
+</script>
+
+</body>
+</html>
