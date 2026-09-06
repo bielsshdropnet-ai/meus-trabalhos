@@ -261,7 +261,7 @@
 
   const REPO_USUARIO = "bielsshdropnet-ai";
   const REPO_NOME = "meus-trabalhos";
-  const REPO_BRANCH = "main";
+  const BRANCHES_POSSIVEIS = ["main", "master"];
 
   const conteudo = document.getElementById("conteudo");
 
@@ -278,26 +278,32 @@
     return m ? m[1] : "";
   }
 
+  async function buscarNaBranch(branch) {
+    const url = `https://api.github.com/repos/${REPO_USUARIO}/${REPO_NOME}/git/trees/${branch}?recursive=1`;
+    const resp = await fetch(url);
+    if (!resp.ok) return null;
+    const dados = await resp.json();
+    if (!Array.isArray(dados.tree)) return null;
+    return dados.tree
+      .filter(item => item.type === "blob" && /\.(pdf|docx?|doc)$/i.test(item.path))
+      .map(item => ({
+        titulo: formatarTitulo(item.path),
+        ano: extrairAno(item.path),
+        url: `https://raw.githubusercontent.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${item.path}`,
+      }))
+      .sort((a, b) => a.titulo.localeCompare(b.titulo, "pt-BR"));
+  }
+
   async function buscarTodosArquivos() {
-    // varre o repositório inteiro, em qualquer pasta, de uma vez só
-    const url = `https://api.github.com/repos/${REPO_USUARIO}/${REPO_NOME}/git/trees/${REPO_BRANCH}?recursive=1`;
-    try {
-      const resp = await fetch(url);
-      if (!resp.ok) return [];
-      const dados = await resp.json();
-      if (!Array.isArray(dados.tree)) return [];
-      return dados.tree
-        .filter(item => item.type === "blob" && /\.(pdf|docx?|doc)$/i.test(item.path))
-        .map(item => ({
-          titulo: formatarTitulo(item.path),
-          ano: extrairAno(item.path),
-          url: `https://raw.githubusercontent.com/${REPO_USUARIO}/${REPO_NOME}/${REPO_BRANCH}/${item.path}`,
-        }))
-        .sort((a, b) => a.titulo.localeCompare(b.titulo, "pt-BR"));
-    } catch (e) {
-      console.error("Não foi possível carregar os arquivos", e);
-      return [];
+    for (const branch of BRANCHES_POSSIVEIS) {
+      try {
+        const resultado = await buscarNaBranch(branch);
+        if (resultado !== null) return resultado;
+      } catch (e) {
+        console.error("Falha ao tentar branch", branch, e);
+      }
     }
+    return [];
   }
 
   async function montarSite() {
@@ -306,8 +312,22 @@
     carregando.textContent = "Carregando…";
     conteudo.appendChild(carregando);
 
-    const trabalhos = await buscarTodosArquivos();
+    let trabalhos = [];
+    let erro = null;
+    try {
+      trabalhos = await buscarTodosArquivos();
+    } catch (e) {
+      erro = e;
+    }
     conteudo.innerHTML = "";
+
+    if (erro) {
+      const msgErro = document.createElement("p");
+      msgErro.className = "vazio";
+      msgErro.textContent = "Não consegui carregar os trabalhos agora. Tente recarregar a página em alguns minutos.";
+      conteudo.appendChild(msgErro);
+      return;
+    }
 
     if (trabalhos.length === 0) {
       const vazio = document.createElement("p");
