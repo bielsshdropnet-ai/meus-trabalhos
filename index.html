@@ -598,6 +598,11 @@
     return `https://raw.githubusercontent.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${caminho}`;
   }
 
+  // Link "que abre, não baixa" — usado só para o PDF ir direto ao visualizador nativo do celular
+  function getLinkVisualizar(branch, caminho) {
+    return `https://raw.githack.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${caminho}`;
+  }
+
   function formatarTitulo(caminho) {
     const nomeArquivo = caminho.split("/").pop();
     return nomeArquivo
@@ -668,6 +673,7 @@
         caminho: item.path,
         branch: branch,
         rawUrl: getLinkRaw(branch, item.path),
+        visualizarUrl: getLinkVisualizar(branch, item.path),
       }))
       .sort((a, b) => b.ano.localeCompare(a.ano, "pt-BR") || a.titulo.localeCompare(b.titulo, "pt-BR"));
   }
@@ -707,17 +713,21 @@
   }
 
   // 🖼️ Abre o modal e carrega o conteúdo: PDF via iframe nativo, Word convertido com mammoth.js
+  // 🚪 Roteador: PDF abre direto no visualizador nativo (nova aba); Word abre no modal convertido
+  function abrirDocumento(trabalho) {
+    if (trabalho.tipo === "pdf") {
+      window.open(trabalho.visualizarUrl + "#view=FitH", "_blank", "noopener,noreferrer");
+      return;
+    }
+    abrirVisualizador(trabalho);
+  }
+
   async function abrirVisualizador(trabalho) {
     tituloModal.textContent = trabalho.titulo;
     linkNovaAba.href = trabalho.rawUrl;
     linkBaixar.href = trabalho.rawUrl;
     linkBaixar.setAttribute("download", trabalho.caminho.split("/").pop());
     overlayModal.classList.add("aberto");
-
-    if (trabalho.tipo === "pdf") {
-      corpoModal.innerHTML = `<iframe src="${trabalho.rawUrl}" title="${trabalho.titulo}"></iframe>`;
-      return;
-    }
 
     if (trabalho.tipo === "word") {
       corpoModal.innerHTML = `<div class="carregando-modal"><span style="font-size:2.2rem;">📘</span><span>Abrindo documento…</span></div>`;
@@ -788,8 +798,8 @@
         </div>
       `;
 
-      card.addEventListener("click", () => abrirVisualizador(t));
-      card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrirVisualizador(t); } });
+      card.addEventListener("click", () => abrirDocumento(t));
+      card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrirDocumento(t); } });
 
       grade.appendChild(card);
 
