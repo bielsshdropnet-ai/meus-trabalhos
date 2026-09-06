@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Acervo Acadêmico — Ciências da Natureza | UFPA</title>
-<!-- PDF.js para pré-visualização de PDFs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
   :root {
@@ -14,6 +13,7 @@
     --verde-suave: #90B77D;
     --verde-fundo: #F0F8E8;
     --azul-laboratorio: #2A76B5;
+    --azul-word: #2B579A;
     --azul-claro: #54A0E4;
     --azul-suave: #B8D4E8;
     --folha-clara: #E2EFDB;
@@ -176,7 +176,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* ===== CARD COM PRÉ-VISUALIZAÇÃO ===== */
   .grade-trabalhos {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -191,12 +190,24 @@
     overflow: hidden;
     transition: all 0.3s ease;
     cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .card-trabalho:hover {
     transform: translateY(-4px);
     border-left-color: var(--azul-laboratorio);
     box-shadow: 0 8px 25px var(--sombra-forte);
+  }
+
+  /* Card Word — borda e cor diferenciada */
+  .card-trabalho.word {
+    border-left-color: var(--azul-word);
+  }
+  .card-trabalho.word:hover {
+    border-left-color: var(--azul-word);
+    box-shadow: 0 8px 25px rgba(43, 87, 154, 0.2);
   }
 
   .preview-pdf {
@@ -216,38 +227,59 @@
     height: auto;
   }
 
-  .preview-pdf .carregando-pdf {
-    color: var(--texto-suave);
-    font-size: 0.9rem;
-    text-align: center;
+  /* Área Word — destaque visual */
+  .preview-word {
+    background: linear-gradient(135deg, #E8F0FA 0%, #D4E3F7 100%);
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .preview-pdf .icone-pdf {
-    font-size: 3rem;
-    opacity: 0.4;
+  .icone-word {
+    font-size: 4rem;
+    filter: drop-shadow(0 2px 4px rgba(43, 87, 154, 0.3));
+  }
+
+  .texto-preview-word {
+    color: var(--azul-word);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0 1rem;
   }
 
   .info-card {
     padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .tipo-arquivo {
     display: inline-block;
     font-size: 0.75rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
-    background: var(--folha-clara);
-    color: var(--verde-escuro);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .tipo-arquivo.pdf {
+    background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+    color: #DC2626;
+  }
+
+  .tipo-arquivo.word {
+    background: linear-gradient(135deg, #E8F0FA 0%, #BFD4F2 100%);
+    color: var(--azul-word);
   }
 
   .titulo-card {
     font-size: 1rem;
     font-weight: 600;
     color: var(--texto-escuro);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
     line-height: 1.4;
+    flex: 1;
   }
 
   .meta-card {
@@ -270,6 +302,7 @@
     text-decoration: none;
     color: inherit;
     display: block;
+    height: 100%;
   }
 
   .vazio, .carregando {
@@ -342,7 +375,7 @@
   </div>
   <h1>Acervo Acadêmico</h1>
   <p class="curso">Repositório de Trabalhos — Estágio Supervisionado e Produções Acadêmicas</p>
-  <p class="desc">Veja a pré-visualização da primeira página de cada trabalho. Clique para abrir o documento completo!</p>
+  <p class="desc">PDF mostra pré-visualização da 1ª página. Word aparece com ícone destacado. Clique para abrir o documento completo!</p>
 </header>
 
 <div class="cabecalho-acoes">
@@ -357,14 +390,13 @@
 <footer>
   <strong>Acervo Acadêmico — Ciências da Natureza | UFPA</strong><br>
   Trabalhos de Licenciatura em Ciências Naturais — Cametá/PA<br>
-  Clique no card para abrir o documento completo. Pré-visualização gerada automaticamente.
+  PDF = pré-visualização da 1ª página | Word = documento para download
 </footer>
 
 <script>
-  // Configuração do PDF.js
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  // ⚙️ REPOSITÓRIO — Confirme os dados abaixo!
+  // ⚙️ CONFIRME SE OS DADOS DO REPOSITÓRIO ESTÃO CORRETOS
   const REPO_USUARIO = "bielsshdropnet-ai";
   const REPO_NOME = "meus-trabalhos";
   const BRANCHES_POSSIVEIS = ["main", "master"];
@@ -374,7 +406,6 @@
   const contadorEl = document.getElementById("contador-total");
   let todosTrabalhos = [];
 
-  // 📝 Formata o nome do arquivo
   function formatarTitulo(caminho) {
     const nomeArquivo = caminho.split("/").pop();
     return nomeArquivo
@@ -383,21 +414,19 @@
       .replace(/\b\w/g, c => c.toUpperCase());
   }
 
-  // 📅 Extrai o ano
   function extrairAno(nomeArquivo) {
     const m = nomeArquivo.match(/(20\d{2})/);
     return m ? m[1] : "";
   }
 
-  // 📄 Tipo de arquivo
   function getTipoArquivo(caminho) {
     const ext = caminho.toLowerCase().split(".").pop();
-    if (ext === "pdf") return "PDF";
-    if (ext.startsWith("doc")) return "Word";
-    return "Arquivo";
+    if (ext === "pdf") return "pdf";
+    if (ext.startsWith("doc")) return "word";
+    return "outro";
   }
 
-  // 🖼️ Renderiza a PRIMEIRA PÁGINA do PDF como imagem
+  // 🖼️ Renderiza 1ª página do PDF
   async function renderizarPrimeiraPagina(pdfUrl, elementoContainer) {
     try {
       const loadingTask = pdfjsLib.getDocument({
@@ -407,35 +436,28 @@
       });
       const pdf = await loadingTask.promise;
       const pagina = await pdf.getPage(1);
-      
       const escala = 1.5;
       const viewport = pagina.getViewport({ scale: escala });
-      
+
       const canvas = document.createElement("canvas");
       const contexto = canvas.getContext("2d");
       canvas.width = viewport.width;
       canvas.height = viewport.height;
-      
+
       await pagina.render({
         canvasContext: contexto,
         viewport: viewport
       }).promise;
 
-      // Ajusta para caber no card
-      canvas.style.maxWidth = "100%";
-      canvas.style.height = "100%";
-      canvas.style.objectFit = "cover";
-      
       elementoContainer.innerHTML = "";
       elementoContainer.appendChild(canvas);
-      
+
     } catch (erro) {
-      console.warn("Não foi possível carregar pré-visualização:", erro);
-      elementoContainer.innerHTML = `<div class="carregando-pdf"><span class="icone-pdf">📄</span><br>Pré-visualização indisponível</div>`;
+      console.warn("Pré-visualização indisponível:", erro);
+      elementoContainer.innerHTML = `<div style="text-align:center;color:var(--texto-suave);"><span style="font-size:2.5rem;">📄</span><br>Pré-visualização indisponível</div>`;
     }
   }
 
-  // 🔍 Busca arquivos no GitHub
   async function buscarNaBranch(branch) {
     const url = `https://api.github.com/repos/${REPO_USUARIO}/${REPO_NOME}/git/trees/${branch}?recursive=1`;
     const resp = await fetch(url);
@@ -465,12 +487,12 @@
     return [];
   }
 
-  // 📋 Renderiza os CARDS com pré-visualização
+  // 📋 RENDERIZA — PDF com pré-visualização | Word com card completo
   function renderizarLista(lista) {
     conteudo.innerHTML = "";
 
     if (lista.length === 0) {
-      conteudo.innerHTML = `<p class="vazio">Nenhum trabalho encontrado. ${todosTrabalhos.length > 0 ? 'Tente outro termo de busca.' : 'Envie arquivos .pdf, .doc ou .docx para o repositório!'}</p>`;
+      conteudo.innerHTML = `<p class="vazio">Nenhum trabalho encontrado. ${todosTrabalhos.length > 0 ? 'Tente outro termo de busca.' : 'Envie arquivos .pdf, .doc ou .docx para o repositório e eles aparecerão aqui!'}</p>`;
       return;
     }
 
@@ -485,22 +507,25 @@
       card.className = "link-acesso";
       card.title = `Abrir: ${t.titulo}`;
 
-      const ehPdf = t.tipo === "PDF";
+      const ehPdf = t.tipo === "pdf";
+      const ehWord = t.tipo === "word";
 
       card.innerHTML = `
-        <div class="card-trabalho">
-          <div class="preview-pdf" data-url="${ehPdf ? t.url : ""}">
+        <div class="card-trabalho ${ehWord ? 'word' : ''}">
+          <div class="preview-pdf ${ehWord ? 'preview-word' : ''}" data-url="${ehPdf ? t.url : ''}">
             ${ehPdf 
-              ? `<div class="carregando-pdf">📄<br>Carregando pré-visualização…</div>` 
-              : `<div class="carregando-pdf"><span class="icone-pdf">📝</span><br>Documento Word</div>`
+              ? `<div style="text-align:center;color:var(--texto-suave);"><span style="font-size:2rem;">📄</span><br>Carregando pré-visualização…</div>` 
+              : ehWord
+                ? `<span class="icone-word">📘</span><span class="texto-preview-word">Documento Word<br>Clique para baixar</span>`
+                : `<span style="font-size:2rem;">📎</span>`
             }
           </div>
           <div class="info-card">
-            <span class="tipo-arquivo">${t.tipo}</span>
+            <span class="tipo-arquivo ${t.tipo}">${ehPdf ? 'PDF' : ehWord ? 'Word' : 'Arquivo'}</span>
             <h3 class="titulo-card">${t.titulo}</h3>
             <div class="meta-card">
               ${t.ano ? `<span class="tag-ano">${t.ano}</span>` : ""}
-              <span>Clique para abrir ↗</span>
+              <span style="font-size:0.75rem;">Clique para abrir ↗</span>
             </div>
           </div>
         </div>
@@ -508,21 +533,20 @@
 
       grade.appendChild(card);
 
-      // Carrega pré-visualização do PDF depois de inserir na página
+      // Carrega pré-visualização só do PDF
       if (ehPdf) {
         setTimeout(() => {
           const previewEl = card.querySelector(".preview-pdf");
           if (previewEl && previewEl.dataset.url) {
             renderizarPrimeiraPagina(previewEl.dataset.url, previewEl);
           }
-        }, 100);
+        }, 50);
       }
     });
 
     conteudo.appendChild(grade);
   }
 
-  // 🔎 Filtro em tempo real
   function filtrarTrabalhos(termo) {
     const termoBusca = termo.toLowerCase().trim();
     if (!termoBusca) {
@@ -535,7 +559,6 @@
     renderizarLista(filtrados);
   }
 
-  // 🚀 INICIALIZA
   async function montarSite() {
     conteudo.innerHTML = `<p class="carregando">Carregando trabalhos…</p>`;
 
@@ -543,7 +566,7 @@
     try {
       trabalhos = await buscarTodosArquivos();
     } catch (e) {
-      conteudo.innerHTML = `<p class="vazio">⚠️ Não foi possível carregar os arquivos. Verifique a conexão e recarregue.</p>`;
+      conteudo.innerHTML = `<p class="vazio">⚠️ Não foi possível carregar os arquivos. Verifique a conexão e recarregue a página.</p>`;
       return;
     }
 
