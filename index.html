@@ -3,149 +3,186 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Caderno de Campo — Ciências Naturais</title>
+<title>Acervo Acadêmico — Ciências da Natureza | UFPA</title>
 <style>
   :root {
-    --papel: #F2F1E8;
-    --musgo: #2E3B2E;
-    --musgo-suave: #5C6B57;
-    --terra: #A85C2C;
-    --terra-clara: #C97A2B;
-    --linha: #D6D3C2;
-    --folha: #6E8B5E;
+    /* 🎨 Paleta alinhada com Ciências da Natureza */
+    --verde-escuro: #2C5F2D;
+    --verde-medio: #4A7C23;
+    --verde-claro: #74A942;
+    --verde-suave: #90B77D;
+    --verde-fundo: #F0F8E8;
+    --azul-laboratorio: #2A76B5;
+    --azul-claro: #54A0E4;
+    --azul-suave: #B8D4E8;
+    --folha-clara: #E2EFDB;
+    --texto-escuro: #1E2E1F;
+    --texto-suave: #4F6651;
+    --dourado-atom: #D4B86A;
+    --borda: #C8D8BC;
+    --sombra: rgba(44, 95, 45, 0.12);
+    --sombra-forte: rgba(44, 95, 45, 0.18);
+    --raio: 14px;
+    --raio-pequeno: 10px;
   }
 
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    margin: 0;
-    background: var(--papel);
-    color: var(--musgo);
-    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-    line-height: 1.55;
+    background: linear-gradient(135deg, var(--verde-fundo) 0%, #E6F2DD 100%);
+    color: var(--texto-escuro);
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Palatino Linotype', Georgia, serif;
+    line-height: 1.6;
+    /* Padrão sutil de folhas */
     background-image:
-      radial-gradient(circle at 1px 1px, rgba(46,59,46,0.05) 1px, transparent 0);
-    background-size: 22px 22px;
+      radial-gradient(circle at 1px 1px, rgba(74, 124, 35, 0.05) 1px, transparent 0),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5c-3 6-10 10-10 18 0 8 7 12 10 18 3-6 10-10 10-18 0-8-7-12-10-18z' fill='none' stroke='%234A7C23' stroke-width='0.5' opacity='0.08'/%3E%3C/svg%3E");
+    background-size: 24px 24px, 120px 120px;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
   }
 
+  /* ===== Cabeçalho ===== */
   header {
-    max-width: 780px;
+    max-width: 860px;
     margin: 0 auto;
-    padding: 4rem 1.5rem 2.5rem;
+    padding: 3rem 1.5rem 2rem;
     position: relative;
-    border-top: 3px double var(--musgo);
+    animation: entradaSuave 0.8s ease-out;
+  }
+
+  @keyframes entradaSuave {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   .marca {
     display: flex;
     align-items: center;
-    gap: 0.85rem;
-    margin-bottom: 1.6rem;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--borda);
   }
 
-  .logo {
-    width: 44px;
-    height: 44px;
+  /* Logo Ciências da Natureza */
+  .logo-container {
+    width: 64px;
+    height: 64px;
     flex-shrink: 0;
-    color: var(--folha);
+    background: linear-gradient(135deg, var(--verde-escuro) 0%, var(--azul-laboratorio) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px var(--sombra);
+  }
+
+  .logo-svg {
+    width: 38px;
+    height: 38px;
+    fill: white;
   }
 
   .marca-texto {
-    font-family: 'Courier New', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.02em;
-    color: var(--musgo-suave);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: var(--texto-suave);
+    text-transform: uppercase;
+    line-height: 1.4;
   }
 
   .marca-texto strong {
     display: block;
-    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-    font-size: 1rem;
-    color: var(--terra);
-    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--verde-escuro);
+    font-weight: 700;
+    text-transform: none;
   }
 
   header h1 {
-    font-size: 2.5rem;
-    font-weight: 500;
+    font-size: 2.8rem;
+    font-weight: 700;
     margin: 0 0 0.5rem;
-    max-width: 18ch;
+    background: linear-gradient(90deg, var(--verde-escuro) 0%, var(--azul-laboratorio) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
   }
 
   header .curso {
-    color: var(--terra);
+    color: var(--azul-laboratorio);
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  header .desc {
+    color: var(--texto-suave);
+    max-width: 56ch;
     font-size: 1rem;
-    margin: 0 0 1rem;
+    line-height: 1.7;
   }
 
-  header p.desc {
-    color: var(--musgo-suave);
-    max-width: 48ch;
-    font-size: 1.03rem;
-  }
-
-  nav.indice {
-    max-width: 780px;
+  /* ===== Barra de Busca ===== */
+  .cabecalho-acoes {
+    max-width: 860px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 1.5rem 1.5rem;
+  }
+
+  .barra-busca {
+    width: 100%;
+    padding: 1rem 1.4rem;
+    border: 2px solid var(--borda);
+    border-radius: var(--raio);
+    background: #fff;
+    color: var(--texto-escuro);
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px var(--sombra);
+  }
+
+  .barra-busca::placeholder { color: var(--texto-suave); }
+  .barra-busca:focus {
+    border-color: var(--verde-claro);
+    box-shadow: 0 0 0 4px rgba(116, 169, 66, 0.15), 0 4px 16px var(--sombra);
+  }
+
+  .resumo-acervo {
     display: flex;
-    gap: 1.5rem;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
     flex-wrap: wrap;
-    border-top: 1px solid var(--linha);
-    border-bottom: 1px solid var(--linha);
   }
 
-  nav.indice a {
-    color: var(--musgo-suave);
-    text-decoration: none;
-    font-size: 0.9rem;
-    padding: 0.9rem 0;
-    border-bottom: 2px solid transparent;
-  }
-
-  nav.indice a:hover {
-    color: var(--terra);
-    border-bottom-color: var(--terra-clara);
-  }
-
-  main {
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 3rem 1.5rem 6rem;
-  }
-
-  .categoria {
-    margin-bottom: 3.5rem;
-    scroll-margin-top: 2rem;
-  }
-
-  .categoria-cabecalho {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem;
-    margin-bottom: 0.3rem;
-  }
-
-  .categoria h2 {
-    font-size: 1.3rem;
+  .contador {
+    font-size: 0.95rem;
+    color: var(--verde-escuro);
+    background: linear-gradient(135deg, var(--folha-clara) 0%, var(--verde-suave) 100%);
+    padding: 0.5rem 1rem;
+    border-radius: 24px;
     font-weight: 600;
-    color: var(--terra);
-    margin: 0;
+    box-shadow: 0 2px 6px var(--sombra);
   }
 
-  .categoria .contagem {
-    font-family: 'Courier New', monospace;
-    font-size: 0.78rem;
-    color: var(--musgo-suave);
+  /* ===== Conteúdo Principal ===== */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 6rem;
+    animation: conteudoAparece 0.8s ease-out 0.2s both;
   }
 
-  .categoria .legenda {
-    color: var(--musgo-suave);
-    font-size: 0.92rem;
-    margin: 0 0 1.2rem;
-    max-width: 52ch;
+  @keyframes conteudoAparece {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
+  /* ===== Lista de Trabalhos ===== */
   ul.lista {
     list-style: none;
     margin: 0;
@@ -153,68 +190,126 @@
   }
 
   ul.lista li {
-    border-left: 2px solid var(--linha);
-    transition: border-color 0.15s ease;
+    margin-bottom: 0.75rem;
+    border-radius: var(--raio);
+    background: #fff;
+    border-left: 4px solid var(--verde-suave);
+    box-shadow: 0 2px 10px var(--sombra);
+    transition: all 0.3s ease;
   }
 
   ul.lista li:hover {
-    border-left-color: var(--folha);
+    border-left-color: var(--azul-laboratorio);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--sombra-forte);
+    background: linear-gradient(90deg, rgba(240, 248, 232, 0.6) 0%, #fff 100%);
   }
 
   ul.lista a {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.9rem 1rem;
+    padding: 1.25rem 1.5rem;
     text-decoration: none;
-    color: var(--musgo);
+    color: var(--texto-escuro);
+    border-radius: var(--raio);
   }
 
   ul.lista a:hover .titulo {
-    color: var(--terra);
+    color: var(--azul-laboratorio);
   }
 
-  ul.lista a:hover .titulo::after {
-    content: "↗";
-    margin-left: 0.5rem;
-    font-size: 0.85em;
+  .item-esquerda {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .icone-tipo {
+    font-size: 1.35rem;
+    flex-shrink: 0;
   }
 
   .titulo {
-    font-size: 1.05rem;
+    font-size: 1.08rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
     font-family: 'Courier New', monospace;
-    font-size: 0.78rem;
-    color: var(--musgo-suave);
+    font-size: 0.85rem;
+    color: var(--texto-suave);
     white-space: nowrap;
     flex-shrink: 0;
   }
 
-  .vazio {
-    color: var(--musgo-suave);
-    font-size: 0.92rem;
-    padding: 0.9rem 1rem;
-    border-left: 2px dashed var(--linha);
+  .tag-ano {
+    background: linear-gradient(135deg, var(--azul-suave) 0%, var(--azul-claro) 100%);
+    color: var(--azul-laboratorio);
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
   }
 
+  /* ===== Estados Vazios e Carregamento ===== */
+  .vazio, .carregando {
+    color: var(--texto-suave);
+    font-size: 1.1rem;
+    padding: 4rem 2rem;
+    text-align: center;
+    border: 2px dashed var(--borda);
+    border-radius: var(--raio);
+    background: rgba(255,255,255,0.7);
+  }
+
+  .carregando::before {
+    content: "🧪";
+    display: block;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ===== Rodapé ===== */
   footer {
-    max-width: 780px;
+    max-width: 860px;
     margin: 0 auto;
-    padding: 0 1.5rem 4rem;
-    color: var(--musgo-suave);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--linha);
-    padding-top: 1.5rem;
+    padding: 2rem 1.5rem 3rem;
+    color: var(--texto-suave);
+    font-size: 0.9rem;
+    border-top: 2px solid var(--borda);
+    text-align: center;
+    background: rgba(255,255,255,0.5);
+    margin-top: 2rem;
+    border-radius: var(--raio) var(--raio) 0 0;
   }
 
-  @media (max-width: 600px) {
-    header { padding: 2.5rem 1.25rem 2rem; }
+  footer strong {
+    color: var(--verde-escuro);
+  }
+
+  /* ===== Responsividade ===== */
+  @media (max-width: 640px) {
+    header { padding: 2rem 1.25rem 1.5rem; }
     header h1 { font-size: 2rem; }
-    main { padding: 2rem 1.25rem 4rem; }
-    ul.lista a { flex-direction: column; gap: 0.15rem; }
+    .marca { flex-direction: column; text-align: center; gap: 0.8rem; }
+    main { padding: 1rem 1.25rem 4rem; }
+    ul.lista a { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+    .meta { width: 100%; justify-content: space-between; }
   }
 </style>
 </head>
@@ -222,49 +317,62 @@
 
 <header>
   <div class="marca">
-    <svg class="logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <!-- folha -->
-      <path d="M50 12C34 20 22 34 22 52c0 14 10 26 24 30 4-16 4-32 0-48 10 10 16 24 14 38 14-6 22-18 22-32C82 30 68 18 50 12Z"
-            stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" fill="none"/>
-      <path d="M46 34c-2 16-2 32 2 48" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-      <!-- molécula sobreposta -->
-      <circle cx="74" cy="70" r="6" stroke="currentColor" stroke-width="3"/>
-      <circle cx="90" cy="60" r="5" stroke="currentColor" stroke-width="3"/>
-      <circle cx="88" cy="82" r="5" stroke="currentColor" stroke-width="3"/>
-      <path d="M79 68l8-6M78 74l7 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-    </svg>
-    <span class="marca-texto">Universidade Federal do Pará<strong>Ciências Naturais</strong></span>
+    <div class="logo-container">
+      <!-- Ícone: Frasco de laboratório + folha → Ciências da Natureza -->
+      <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 20v40c0 8-6 15-14 15s-14-7-14-15v-40h28z" fill="none" stroke="white" stroke-width="5"/>
+        <ellipse cx="36" cy="75" rx="14" ry="8" fill="white"/>
+        <path d="M60 35 Q75 25 85 38 Q75 50 60 42 Z" fill="white" opacity="0.9"/>
+        <circle cx="70" cy="55" r="12" fill="none" stroke="white" stroke-width="3"/>
+        <circle cx="85" cy="45" r="8" fill="none" stroke="white" stroke-width="3"/>
+      </svg>
+    </div>
+    <div class="marca-texto">
+      Universidade Federal do Pará
+      <strong>Ciências da Natureza</strong>
+      Licenciatura
+    </div>
   </div>
-  <h1>Acervo acadêmico</h1>
-  <p class="curso">Trabalhos produzidos ao longo do curso</p>
-  <p class="desc">Basta subir o arquivo em qualquer lugar do repositório — ele aparece aqui automaticamente.</p>
+  <h1>Acervo Acadêmico</h1>
+  <p class="curso">Repositório de Trabalhos — Estágio Supervisionado e Produções Acadêmicas</p>
+  <p class="desc">Seu acervo organizado. Os arquivos aparecem automaticamente assim que são enviados ao repositório. Basta buscar e acessar!</p>
 </header>
+
+<div class="cabecalho-acoes">
+  <input type="search" class="barra-busca" id="busca" placeholder="🔍 Buscar trabalho por nome ou ano…" aria-label="Buscar trabalhos">
+  <div class="resumo-acervo">
+    <span class="contador" id="contador-total">0 trabalhos</span>
+  </div>
+</div>
 
 <main id="conteudo"></main>
 
 <footer>
-  Ciências Naturais — Universidade Federal do Pará. Acervo atualizado conforme novos trabalhos são adicionados.
+  <strong>Acervo Acadêmico — Ciências da Natureza | UFPA</strong><br>
+  Trabalhos de Licenciatura em Ciências Naturais — Cametá/PA<br>
+  Atualizado automaticamente conforme novos arquivos são adicionados.
 </footer>
 
 <script>
   /*
-    COMO ADICIONAR UM NOVO TRABALHO
-    --------------------------------
-    Não precisa mexer neste arquivo, nem seguir pasta nenhuma. Só:
-    1. Sobe o PDF (ou Word) em qualquer lugar do repositório no GitHub —
-       pode até jogar direto na raiz, junto com o index.html.
-    2. Pronto. Na próxima vez que alguém abrir o site, o arquivo já aparece
-       sozinho na lista. O título exibido é o próprio nome do arquivo
-       (troque "-" ou "_" por espaço para ficar mais bonito antes de subir,
-       ex: "relatorio-microscopia-2024.pdf" vira "Relatorio Microscopia 2024").
+    📖 INSTRUÇÕES — Adicionar Trabalhos
+    ------------------------------------
+    1. Envie o arquivo (.pdf, .doc, .docx) para o repositório do GitHub
+    2. Use nomes claros: relatorio-estagio-2026.pdf → "Relatorio Estagio 2026"
+    3. Os arquivos carregam SOZINHOS na página! ✨
   */
 
+  // ⚙️ CONFIGURAÇÃO — Verifique seu repositório
   const REPO_USUARIO = "bielsshdropnet-ai";
   const REPO_NOME = "meus-trabalhos";
   const BRANCHES_POSSIVEIS = ["main", "master"];
 
   const conteudo = document.getElementById("conteudo");
+  const busca = document.getElementById("busca");
+  const contadorEl = document.getElementById("contador-total");
+  let todosTrabalhos = [];
 
+  // 📝 Formata o nome do arquivo para exibição
   function formatarTitulo(caminho) {
     const nomeArquivo = caminho.split("/").pop();
     return nomeArquivo
@@ -273,11 +381,21 @@
       .replace(/\b\w/g, c => c.toUpperCase());
   }
 
+  // 📅 Extrai o ano do nome do arquivo
   function extrairAno(nomeArquivo) {
     const m = nomeArquivo.match(/(20\d{2})/);
     return m ? m[1] : "";
   }
 
+  // 📄 Ícone conforme tipo de arquivo
+  function getIconeArquivo(caminho) {
+    const ext = caminho.toLowerCase().split(".").pop();
+    if (ext === "pdf") return "📄";
+    if (ext.startsWith("doc")) return "📝";
+    return "📎";
+  }
+
+  // 🔍 Busca arquivos no repositório GitHub
   async function buscarNaBranch(branch) {
     const url = `https://api.github.com/repos/${REPO_USUARIO}/${REPO_NOME}/git/trees/${branch}?recursive=1`;
     const resp = await fetch(url);
@@ -289,9 +407,10 @@
       .map(item => ({
         titulo: formatarTitulo(item.path),
         ano: extrairAno(item.path),
+        icone: getIconeArquivo(item.path),
         url: `https://raw.githubusercontent.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${item.path}`,
       }))
-      .sort((a, b) => a.titulo.localeCompare(b.titulo, "pt-BR"));
+      .sort((a, b) => b.ano.localeCompare(a.ano, "pt-BR") || a.titulo.localeCompare(b.titulo, "pt-BR"));
   }
 
   async function buscarTodosArquivos() {
@@ -300,70 +419,90 @@
         const resultado = await buscarNaBranch(branch);
         if (resultado !== null) return resultado;
       } catch (e) {
-        console.error("Falha ao tentar branch", branch, e);
+        console.error("Erro na branch", branch, e);
       }
     }
     return [];
   }
 
-  async function montarSite() {
-    const carregando = document.createElement("p");
-    carregando.className = "vazio";
-    carregando.textContent = "Carregando…";
-    conteudo.appendChild(carregando);
-
-    let trabalhos = [];
-    let erro = null;
-    try {
-      trabalhos = await buscarTodosArquivos();
-    } catch (e) {
-      erro = e;
-    }
+  // 📋 Renderiza a lista de trabalhos
+  function renderizarLista(lista) {
     conteudo.innerHTML = "";
 
-    if (erro) {
-      const msgErro = document.createElement("p");
-      msgErro.className = "vazio";
-      msgErro.textContent = "Não consegui carregar os trabalhos agora. Tente recarregar a página em alguns minutos.";
-      conteudo.appendChild(msgErro);
+    if (lista.length === 0) {
+      conteudo.innerHTML = `<p class="vazio">Nenhum trabalho encontrado. ${todosTrabalhos.length > 0 ? 'Tente outro termo de busca.' : 'Envie arquivos .pdf, .doc ou .docx para o repositório e eles aparecerão aqui!'}</p>`;
       return;
     }
 
-    if (trabalhos.length === 0) {
-      const vazio = document.createElement("p");
-      vazio.className = "vazio";
-      vazio.textContent = "Nenhum trabalho adicionado ainda.";
-      conteudo.appendChild(vazio);
-      return;
-    }
+    const ul = document.createElement("ul");
+    ul.className = "lista";
 
-    const lista = document.createElement("ul");
-    lista.className = "lista";
-
-    trabalhos.forEach(t => {
-      const item = document.createElement("li");
+    lista.forEach(t => {
+      const li = document.createElement("li");
       const a = document.createElement("a");
       a.href = t.url;
       a.target = "_blank";
-      a.rel = "noopener";
+      a.rel = "noopener noreferrer";
+      a.title = `Abrir: ${t.titulo}`;
 
-      const span = document.createElement("span");
-      span.className = "titulo";
-      span.textContent = t.titulo;
+      a.innerHTML = `
+        <div class="item-esquerda">
+          <span class="icone-tipo">${t.icone}</span>
+          <span class="titulo">${t.titulo}</span>
+        </div>
+        <div class="meta">
+          ${t.ano ? `<span class="tag-ano">${t.ano}</span>` : ""}
+        </div>
+      `;
 
-      const meta = document.createElement("span");
-      meta.className = "meta";
-      meta.textContent = t.ano;
-
-      a.appendChild(span);
-      a.appendChild(meta);
-      item.appendChild(a);
-      lista.appendChild(item);
+      li.appendChild(a);
+      ul.appendChild(li);
     });
 
-    conteudo.appendChild(lista);
+    conteudo.appendChild(ul);
   }
 
+  // 🔎 Filtro em tempo real
+  function filtrarTrabalhos(termo) {
+    const termoBusca = termo.toLowerCase().trim();
+    if (!termoBusca) {
+      renderizarLista(todosTrabalhos);
+      return;
+    }
+    const filtrados = todosTrabalhos.filter(t =>
+      t.titulo.toLowerCase().includes(termoBusca) || t.ano.includes(termoBusca)
+    );
+    renderizarLista(filtrados);
+  }
+
+  // 🚀 Inicialização — CARREGA TUDO AUTOMATICAMENTE
+  async function montarSite() {
+    // Mostra carregamento imediatamente
+    conteudo.innerHTML = `<p class="carregando">Carregando trabalhos…</p>`;
+
+    let trabalhos = [];
+    try {
+      trabalhos = await buscarTodosArquivos();
+    } catch (e) {
+      conteudo.innerHTML = `<p class="vazio">⚠️ Não foi possível carregar os arquivos. Verifique a conexão e recarregue a página.</p>`;
+      return;
+    }
+
+    todosTrabalhos = trabalhos;
+    
+    // Atualiza contador
+    contadorEl.textContent = `${trabalhos.length} trabalho${trabalhos.length !== 1 ? 's' : ''}`;
+    
+    // Renderiza a lista com os arquivos já existentes
+    renderizarLista(trabalhos);
+
+    // Ativa busca em tempo real
+    busca.addEventListener("input", (e) => filtrarTrabalhos(e.target.value));
+  }
+
+  // ⚡ INICIA ASSIM QUE A PÁGINA CARREGA
+  document.addEventListener("DOMContentLoaded", montarSite);
+  // Fallback: executa imediatamente
   montarSite();
 </script>
 
