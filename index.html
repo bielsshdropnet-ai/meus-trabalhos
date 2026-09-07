@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acervo Acadêmico — Ciências da Natureza | UFPA</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+  :root {
+    --verde-escuro: #2C5F2D;
+    --verde-medio: #4A7C23;
+    --verde-claro: #74A942;
+    --verde-suave: #90B77D;
+    --verde-fundo: #F0F8E8;
+    --azul-laboratorio: #2A76B5;
+    --azul-word: #2B579A;
+    --azul-claro: #54A0E4;
+    --azul-suave: #B8D4E8;
+    --folha-clara: #E2EFDB;
+    --texto-escuro: #1E2E1F;
+    --texto-suave: #4F6651;
+    --borda: #C8D8BC;
+    --sombra: rgba(44, 95, 45, 0.12);
+    --sombra-forte: rgba(44, 95, 45, 0.18);
+    --raio: 14px;
+    --raio-pequeno: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: linear-gradient(135deg, var(--verde-fundo) 0%, #E6F2DD 100%);
+    color: var(--texto-escuro);
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Palatino Linotype', Georgia, serif;
+    line-height: 1.6;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(74, 124, 35, 0.05) 1px, transparent 0),
+      url("data:image/svg+xml,%3Csvg width='240' height='240' viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.16' stroke='%234A7C23'%3E%3Cpath d='M40 30c-6 10-16 16-16 28 0 12 10 18 16 28 6-10 16-16 16-28 0-12-10-18-16-28z' fill='none' stroke-width='1.3'/%3E%3Cpath d='M40 46v40' stroke-width='1'/%3E%3C/g%3E%3Cg opacity='0.15' stroke='%232A76B5' transform='translate(150,15)'%3E%3Cellipse cx='30' cy='30' rx='28' ry='11' fill='none' stroke-width='1.3'/%3E%3Cellipse cx='30' cy='30' rx='28' ry='11' fill='none' stroke-width='1.3' transform='rotate(60 30 30)'/%3E%3Cellipse cx='30' cy='30' rx='28' ry='11' fill='none' stroke-width='1.3' transform='rotate(120 30 30)'/%3E%3Ccircle cx='30' cy='30' r='3' fill='%232A76B5' stroke='none'/%3E%3C/g%3E%3Cg opacity='0.16' stroke='%234A7C23' transform='translate(20,150)'%3E%3Cpath d='M15 5h20v20l14 30a8 8 0 01-7 12H8a8 8 0 01-7-12l14-30z' fill='none' stroke-width='1.3'/%3E%3Cline x1='12' y1='5' x2='38' y2='5' stroke-width='1.3'/%3E%3C/g%3E%3Cg opacity='0.15' stroke='%232A76B5' transform='translate(150,150)'%3E%3Cpath d='M10 10 C 30 25, 10 45, 30 60' fill='none' stroke-width='1.3'/%3E%3Cpath d='M30 10 C 10 25, 30 45, 10 60' fill='none' stroke-width='1.3'/%3E%3Cline x1='13' y1='16' x2='27' y2='16' stroke-width='1'/%3E%3Cline x1='13' y1='30' x2='27' y2='30' stroke-width='1'/%3E%3Cline x1='13' y1='44' x2='27' y2='44' stroke-width='1'/%3E%3Cline x1='13' y1='54' x2='27' y2='54' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 24px 24px, 240px 240px;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  header {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 1.5rem;
+    animation: entradaSuave 0.8s ease-out;
+  }
+
+  @keyframes entradaSuave {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .marca {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 2px solid var(--borda);
+  }
+
+  .logo-container {
+    width: 62px;
+    height: 62px;
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px var(--sombra);
+    padding: 4px;
+    overflow: hidden;
+  }
+
+  .logo-svg { width: 100%; height: 100%; object-fit: contain; }
+
+  /* Espaço reservado para o brasão oficial da UFPA (envie o arquivo para eu colocar aqui) */
+  .logo-ufpa {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    object-fit: contain;
+    margin-left: auto;
+  }
+
+  .marca-texto {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--texto-suave);
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  .marca-texto strong {
+    display: block;
+    font-size: 1.15rem;
+    color: var(--verde-escuro);
+    font-weight: 700;
+    text-transform: none;
+  }
+
+  header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.4rem;
+    background: linear-gradient(90deg, var(--verde-escuro) 0%, var(--azul-laboratorio) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+
+  header .curso {
+    color: var(--azul-laboratorio);
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+  }
+
+  header .desc {
+    color: var(--texto-suave);
+    max-width: 56ch;
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .barra-fixa {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(240, 248, 232, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 1rem 0 0.9rem;
+    border-bottom: 1px solid var(--borda);
+    box-shadow: 0 4px 16px rgba(44, 95, 45, 0.06);
+  }
+
+  .cabecalho-acoes {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .barra-busca {
+    width: 100%;
+    padding: 0.9rem 1.3rem;
+    border: 2px solid var(--borda);
+    border-radius: var(--raio);
+    background: #fff;
+    color: var(--texto-escuro);
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px var(--sombra);
+  }
+
+  .barra-busca::placeholder { color: var(--texto-suave); }
+  .barra-busca:focus {
+    border-color: var(--verde-claro);
+    box-shadow: 0 0 0 4px rgba(116, 169, 66, 0.15), 0 4px 16px var(--sombra);
+  }
+
+  .filtros-categoria {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+  }
+
+  .chip-categoria {
+    border: 2px solid var(--borda);
+    background: #fff;
+    color: var(--texto-suave);
+    padding: 0.45rem 0.95rem;
+    border-radius: 24px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .chip-categoria:hover { border-color: var(--verde-claro); color: var(--verde-escuro); }
+
+  .chip-categoria.ativo {
+    background: linear-gradient(135deg, var(--verde-medio) 0%, var(--azul-laboratorio) 100%);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 3px 10px var(--sombra);
+  }
+
+  .resumo-acervo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .contador {
+    font-size: 0.85rem;
+    color: var(--verde-escuro);
+    background: linear-gradient(135deg, var(--folha-clara) 0%, var(--verde-suave) 100%);
+    padding: 0.4rem 0.9rem;
+    border-radius: 24px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px var(--sombra);
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1.5rem 1.5rem 6rem;
+    animation: conteudoAparece 0.8s ease-out 0.2s both;
+  }
+
+  @keyframes conteudoAparece {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .grade-trabalhos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.4rem;
+  }
+
+  .card-trabalho {
+    background: #fff;
+    border-radius: var(--raio);
+    border-left: 4px solid var(--verde-suave);
+    box-shadow: 0 3px 12px var(--sombra);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-trabalho:hover {
+    transform: translateY(-5px) scale(1.01);
+    border-left-color: var(--azul-laboratorio);
+    box-shadow: 0 10px 28px var(--sombra-forte);
+  }
+
+  .card-trabalho.word { border-left-color: var(--azul-word); }
+  .card-trabalho.word:hover {
+    border-left-color: var(--azul-word);
+    box-shadow: 0 10px 28px rgba(43, 87, 154, 0.22);
+  }
+
+  .preview-pdf {
+    width: 100%;
+    height: 190px;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--borda);
+    position: relative;
+  }
+
+  .preview-pdf canvas { max-width: 100%; height: auto; }
+
+  .preview-word {
+    background: linear-gradient(135deg, #E8F0FA 0%, #D4E3F7 100%);
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .icone-word { font-size: 3.6rem; filter: drop-shadow(0 2px 4px rgba(43, 87, 154, 0.3)); }
+
+  .texto-preview-word {
+    color: var(--azul-word);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .info-card { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; }
+
+  .etiquetas-card { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.6rem; }
+
+  .tipo-arquivo {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 0.22rem 0.55rem;
+    border-radius: 6px;
+    font-weight: 700;
+  }
+
+  .tipo-arquivo.pdf { background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%); color: #DC2626; }
+  .tipo-arquivo.word { background: linear-gradient(135deg, #E8F0FA 0%, #BFD4F2 100%); color: var(--azul-word); }
+
+  .tag-categoria {
+    display: inline-block;
+    font-size: 0.72rem;
+    padding: 0.22rem 0.55rem;
+    border-radius: 6px;
+    font-weight: 600;
+    background: var(--folha-clara);
+    color: var(--verde-escuro);
+    border: 1px solid var(--verde-suave);
+  }
+
+  .titulo-card {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--texto-escuro);
+    margin-bottom: 0.7rem;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .meta-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--texto-suave);
+  }
+
+  .tag-ano {
+    background: linear-gradient(135deg, var(--azul-suave) 0%, var(--azul-claro) 100%);
+    color: var(--azul-laboratorio);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+
+  .abrir-direto { color: var(--azul-laboratorio); font-weight: 600; font-size: 0.75rem; }
+
+  .vazio, .carregando {
+    color: var(--texto-suave);
+    font-size: 1.05rem;
+    padding: 4rem 2rem;
+    text-align: center;
+    border: 2px dashed var(--borda);
+    border-radius: var(--raio);
+    background: rgba(255,255,255,0.7);
+  }
+
+  .carregando::before {
+    content: "🧪";
+    display: block;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+  footer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+    color: var(--texto-suave);
+    font-size: 0.88rem;
+    border-top: 2px solid var(--borda);
+    text-align: center;
+    background: rgba(255,255,255,0.5);
+    margin-top: 2rem;
+    border-radius: var(--raio) var(--raio) 0 0;
+  }
+
+  footer strong { color: var(--verde-escuro); }
+
+  /* ===== Modal visualizador ===== */
+  .overlay-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 46, 31, 0.55);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 1.2rem;
+    animation: fadeInOverlay 0.2s ease-out;
+  }
+
+  .overlay-modal.aberto { display: flex; }
+
+  @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+
+  .caixa-modal {
+    background: #fff;
+    border-radius: var(--raio);
+    width: 100%;
+    max-width: 820px;
+    height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: subirModal 0.25s ease-out;
+  }
+
+  @keyframes subirModal { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .cabecalho-modal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.3rem;
+    border-bottom: 1px solid var(--borda);
+    background: var(--verde-fundo);
+  }
+
+  .titulo-modal {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--verde-escuro);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .acoes-modal { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+
+  .botao-modal {
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.45rem 0.85rem;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--azul-laboratorio);
+    border: 1px solid var(--borda);
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .botao-modal:hover { border-color: var(--azul-laboratorio); }
+
+  .fechar-modal {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    color: var(--texto-escuro);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px var(--sombra);
+    flex-shrink: 0;
+  }
+
+  .fechar-modal:hover { background: #FEE2E2; color: #DC2626; }
+
+  .corpo-modal {
+    flex: 1;
+    overflow-y: auto;
+    background: #F7F9F5;
+  }
+
+  .corpo-modal iframe { width: 100%; height: 100%; border: none; }
+
+  .conteudo-docx {
+    background: #fff;
+    max-width: 700px;
+    margin: 1.5rem auto;
+    padding: 2.2rem 2.5rem;
+    box-shadow: 0 2px 12px var(--sombra);
+    border-radius: 6px;
+    font-family: 'Segoe UI', Georgia, serif;
+    color: #222;
+    line-height: 1.7;
+  }
+
+  .conteudo-docx img { max-width: 100%; height: auto; }
+  .conteudo-docx table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  .conteudo-docx td, .conteudo-docx th { border: 1px solid #ccc; padding: 0.4rem 0.6rem; }
+
+  .carregando-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--texto-suave);
+    gap: 0.6rem;
+  }
+
+  @media (max-width: 640px) {
+    header { padding: 1.8rem 1.25rem 1.2rem; }
+    header h1 { font-size: 1.8rem; }
+    .marca { flex-direction: column; text-align: center; gap: 0.7rem; }
+    main { padding: 1.2rem 1.25rem 4rem; }
+    .grade-trabalhos { grid-template-columns: 1fr; }
+    .caixa-modal { height: 92vh; }
+    .conteudo-docx { padding: 1.4rem 1.3rem; margin: 0.8rem; }
+    .titulo-modal { font-size: 0.9rem; }
+    .botao-modal { padding: 0.4rem 0.6rem; font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="marca">
+    <div class="logo-container">
+      <img src="logo-ciencias-natureza.webp" alt="Logo Ciências da Natureza" class="logo-svg">
+    </div>
+    <div class="marca-texto">
+      Universidade Federal do Pará
+      <strong>Ciências da Natureza</strong>
+      Licenciatura
+    </div>
+    <img src="brasao-ufpa.jpg" alt="Brasão da UFPA" class="logo-ufpa">
+  </div>
+  <h1>Acervo Acadêmico</h1>
+  <p class="curso">Repositório de Trabalhos — Estágio Supervisionado e Produções Acadêmicas</p>
+  <p class="desc">PDF e Word abrem direto, sem download forçado.</p>
+</header>
+
+<div class="barra-fixa">
+  <div class="cabecalho-acoes">
+    <input type="search" class="barra-busca" id="busca" placeholder="🔍 Buscar trabalho por nome ou ano…" aria-label="Buscar trabalhos">
+    <div class="filtros-categoria" id="filtros-categoria"></div>
+    <div class="resumo-acervo">
+      <span class="contador" id="contador-total">0 trabalhos</span>
+    </div>
+  </div>
+</div>
+
+<main id="conteudo"></main>
+
+<footer>
+  <strong>Acervo Acadêmico — Ciências da Natureza | UFPA</strong><br>
+  Trabalhos de Licenciatura em Ciências Naturais — Cametá/PA
+  <p style="margin-top:1.2rem;font-size:0.85rem;">
+    <strong style="letter-spacing:0.03em;">MENDES, Gabriel</strong><br>
+    gabigolgabriel421@gmail.com
+  </p>
+</footer>
+
+<!-- Modal visualizador (PDF via iframe, Word convertido para HTML) -->
+<div class="overlay-modal" id="overlay-modal">
+  <div class="caixa-modal">
+    <div class="cabecalho-modal">
+      <span class="titulo-modal" id="titulo-modal">Documento</span>
+      <div class="acoes-modal">
+        <a class="botao-modal" id="link-nova-aba" href="#" target="_blank" rel="noopener noreferrer">Nova aba ↗</a>
+        <a class="botao-modal" id="link-baixar" href="#" download>Baixar</a>
+        <button class="fechar-modal" id="fechar-modal" aria-label="Fechar">✕</button>
+      </div>
+    </div>
+    <div class="corpo-modal" id="corpo-modal"></div>
+  </div>
+</div>
+
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  const REPO_USUARIO = "bielsshdropnet-ai";
+  const REPO_NOME = "meus-trabalhos";
+  const BRANCHES_POSSIVEIS = ["main", "master"];
+
+  const REGRAS_CATEGORIA = [
+    { categoria: "Estágio Supervisionado", palavras: ["estagio", "estágio"] },
+    { categoria: "Relato de Experiência", palavras: ["relato"] },
+    { categoria: "Relatório de Aula", palavras: ["aula"] },
+  ];
+  const CATEGORIA_OUTROS = "Outros";
+
+  const conteudo = document.getElementById("conteudo");
+  const busca = document.getElementById("busca");
+  const filtrosCategoriaEl = document.getElementById("filtros-categoria");
+  const contadorEl = document.getElementById("contador-total");
+  const overlayModal = document.getElementById("overlay-modal");
+  const tituloModal = document.getElementById("titulo-modal");
+  const corpoModal = document.getElementById("corpo-modal");
+  const linkNovaAba = document.getElementById("link-nova-aba");
+  const linkBaixar = document.getElementById("link-baixar");
+  const fecharModalBtn = document.getElementById("fechar-modal");
+
+  let todosTrabalhos = [];
+  let categoriaAtiva = "Todos";
+
+  function getLinkRaw(branch, caminho) {
+    return `https://raw.githubusercontent.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${caminho}`;
+  }
+
+  // Link "que abre, não baixa" — usado só para o PDF ir direto ao visualizador nativo do celular
+  function getLinkVisualizar(branch, caminho) {
+    return `https://raw.githack.com/${REPO_USUARIO}/${REPO_NOME}/${branch}/${caminho}`;
+  }
+
+  function formatarTitulo(caminho) {
+    const nomeArquivo = caminho.split("/").pop();
+    return nomeArquivo
+      .replace(/\.[^.]+$/, "")
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function extrairAno(nomeArquivo) {
+    const m = nomeArquivo.match(/(20\d{2})/);
+    return m ? m[1] : "";
+  }
+
+  function getTipoArquivo(caminho) {
+    const ext = caminho.toLowerCase().split(".").pop();
+    if (ext === "pdf") return "pdf";
+    if (ext.startsWith("doc")) return "word";
+    return "outro";
+  }
+
+  function getCategoria(caminho) {
+    const semAcento = caminho.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    for (const regra of REGRAS_CATEGORIA) {
+      if (regra.palavras.some(p => semAcento.includes(p.normalize("NFD").replace(/[\u0300-\u036f]/g, "")))) {
+        return regra.categoria;
+      }
+    }
+    return CATEGORIA_OUTROS;
+  }
+
+  async function renderizarPrimeiraPagina(pdfUrl, elementoContainer) {
+    try {
+      const loadingTask = pdfjsLib.getDocument({
+        url: pdfUrl,
+        cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+        cMapPacked: true,
+      });
+      const pdf = await loadingTask.promise;
+      const pagina = await pdf.getPage(1);
+      const escala = 1.5;
+      const viewport = pagina.getViewport({ scale: escala });
+      const canvas = document.createElement("canvas");
+      const contexto = canvas.getContext("2d");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await pagina.render({ canvasContext: contexto, viewport: viewport }).promise;
+      elementoContainer.innerHTML = "";
+      elementoContainer.appendChild(canvas);
+    } catch (erro) {
+      console.warn("Pré-visualização indisponível:", erro);
+      elementoContainer.innerHTML = `<div style="text-align:center;color:var(--texto-suave);"><span style="font-size:2.5rem;">📄</span><br>Pré-visualização indisponível</div>`;
+    }
+  }
+
+  async function buscarNaBranch(branch) {
+    const url = `https://api.github.com/repos/${REPO_USUARIO}/${REPO_NOME}/git/trees/${branch}?recursive=1`;
+    const resp = await fetch(url);
+    if (!resp.ok) return null;
+    const dados = await resp.json();
+    if (!Array.isArray(dados.tree)) return null;
+    return dados.tree
+      .filter(item => item.type === "blob" && /\.(pdf|docx?|doc)$/i.test(item.path))
+      .map(item => ({
+        titulo: formatarTitulo(item.path),
+        ano: extrairAno(item.path),
+        tipo: getTipoArquivo(item.path),
+        categoria: getCategoria(item.path),
+        caminho: item.path,
+        branch: branch,
+        rawUrl: getLinkRaw(branch, item.path),
+        visualizarUrl: getLinkVisualizar(branch, item.path),
+      }))
+      .sort((a, b) => b.ano.localeCompare(a.ano, "pt-BR") || a.titulo.localeCompare(b.titulo, "pt-BR"));
+  }
+
+  async function buscarTodosArquivos() {
+    for (const branch of BRANCHES_POSSIVEIS) {
+      try {
+        const resultado = await buscarNaBranch(branch);
+        if (resultado !== null) return resultado;
+      } catch (e) {
+        console.error("Erro na branch", branch, e);
+      }
+    }
+    return [];
+  }
+
+  function montarFiltrosCategoria(lista) {
+    const categoriasPresentes = [...new Set(lista.map(t => t.categoria))];
+    const ordem = ["Relatório de Aula", "Relato de Experiência", "Estágio Supervisionado", "Outros"];
+    const categoriasOrdenadas = ordem.filter(c => categoriasPresentes.includes(c));
+    const todasCategorias = ["Todos", ...categoriasOrdenadas];
+
+    filtrosCategoriaEl.innerHTML = "";
+    todasCategorias.forEach(cat => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip-categoria" + (cat === categoriaAtiva ? " ativo" : "");
+      chip.textContent = cat;
+      chip.addEventListener("click", () => {
+        categoriaAtiva = cat;
+        aplicarFiltros();
+        [...filtrosCategoriaEl.children].forEach(c => c.classList.remove("ativo"));
+        chip.classList.add("ativo");
+      });
+      filtrosCategoriaEl.appendChild(chip);
+    });
+  }
+
+  // 🖼️ Abre o modal e carrega o conteúdo: PDF via iframe nativo, Word convertido com mammoth.js
+  // 🚪 Roteador: PDF abre direto no visualizador nativo (nova aba); Word abre no modal convertido
+  function abrirDocumento(trabalho) {
+    if (trabalho.tipo === "pdf") {
+      window.open(trabalho.visualizarUrl + "#view=FitH", "_blank", "noopener,noreferrer");
+      return;
+    }
+    abrirVisualizador(trabalho);
+  }
+
+  async function abrirVisualizador(trabalho) {
+    tituloModal.textContent = trabalho.titulo;
+    linkNovaAba.href = trabalho.rawUrl;
+    linkBaixar.href = trabalho.rawUrl;
+    linkBaixar.setAttribute("download", trabalho.caminho.split("/").pop());
+    overlayModal.classList.add("aberto");
+
+    if (trabalho.tipo === "word") {
+      corpoModal.innerHTML = `<div class="carregando-modal"><span style="font-size:2.2rem;">📘</span><span>Abrindo documento…</span></div>`;
+      try {
+        const resp = await fetch(trabalho.rawUrl);
+        const buffer = await resp.arrayBuffer();
+        const resultado = await mammoth.convertToHtml({ arrayBuffer: buffer });
+        corpoModal.innerHTML = `<div class="conteudo-docx">${resultado.value}</div>`;
+      } catch (erro) {
+        console.error("Erro ao converter Word:", erro);
+        corpoModal.innerHTML = `<div class="carregando-modal"><span style="font-size:2.2rem;">⚠️</span><span>Não foi possível abrir a pré-visualização. Use "Nova aba" ou "Baixar".</span></div>`;
+      }
+      return;
+    }
+
+    corpoModal.innerHTML = `<div class="carregando-modal">Formato não suportado para pré-visualização.</div>`;
+  }
+
+  function fecharModal() {
+    overlayModal.classList.remove("aberto");
+    corpoModal.innerHTML = "";
+  }
+
+  fecharModalBtn.addEventListener("click", fecharModal);
+  overlayModal.addEventListener("click", (e) => { if (e.target === overlayModal) fecharModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") fecharModal(); });
+
+  function renderizarLista(lista) {
+    conteudo.innerHTML = "";
+
+    if (lista.length === 0) {
+      conteudo.innerHTML = `<p class="vazio">Nenhum trabalho encontrado. ${todosTrabalhos.length > 0 ? 'Tente outro termo de busca ou categoria.' : 'Envie arquivos .pdf, .doc ou .docx para o repositório e eles aparecerão aqui!'}</p>`;
+      return;
+    }
+
+    const grade = document.createElement("div");
+    grade.className = "grade-trabalhos";
+
+    lista.forEach(t => {
+      const card = document.createElement("div");
+      card.className = `card-trabalho ${t.tipo === 'word' ? 'word' : ''}`;
+      card.tabIndex = 0;
+      card.setAttribute("role", "button");
+      card.title = `Abrir: ${t.titulo}`;
+
+      const ehPdf = t.tipo === "pdf";
+      const ehWord = t.tipo === "word";
+
+      card.innerHTML = `
+        <div class="preview-pdf ${ehWord ? 'preview-word' : ''}" data-url="${ehPdf ? t.rawUrl : ''}">
+          ${ehPdf
+            ? `<div style="text-align:center;color:var(--texto-suave);"><span style="font-size:2rem;">📄</span><br>Carregando pré-visualização…</div>`
+            : ehWord
+              ? `<span class="icone-word">📘</span><span class="texto-preview-word">Documento Word<br>Abre direto para visualização</span>`
+              : `<span style="font-size:2rem;">📎</span>`
+          }
+        </div>
+        <div class="info-card">
+          <div class="etiquetas-card">
+            <span class="tipo-arquivo ${t.tipo}">${ehPdf ? 'PDF' : ehWord ? 'Word' : 'Arquivo'}</span>
+            <span class="tag-categoria">${t.categoria}</span>
+          </div>
+          <h3 class="titulo-card">${t.titulo}</h3>
+          <div class="meta-card">
+            ${t.ano ? `<span class="tag-ano">${t.ano}</span>` : "<span></span>"}
+            <span class="abrir-direto">Abre direto ↗</span>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener("click", () => abrirDocumento(t));
+      card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrirDocumento(t); } });
+
+      grade.appendChild(card);
+
+      if (ehPdf) {
+        setTimeout(() => {
+          const previewEl = card.querySelector(".preview-pdf");
+          if (previewEl && previewEl.dataset.url) {
+            renderizarPrimeiraPagina(previewEl.dataset.url, previewEl);
+          }
+        }, 50);
+      }
+    });
+
+    conteudo.appendChild(grade);
+  }
+
+  function aplicarFiltros() {
+    const termoBusca = busca.value.toLowerCase().trim();
+    let filtrados = todosTrabalhos;
+
+    if (categoriaAtiva !== "Todos") {
+      filtrados = filtrados.filter(t => t.categoria === categoriaAtiva);
+    }
+    if (termoBusca) {
+      filtrados = filtrados.filter(t =>
+        t.titulo.toLowerCase().includes(termoBusca) || t.ano.includes(termoBusca)
+      );
+    }
+    renderizarLista(filtrados);
+  }
+
+  async function montarSite() {
+    conteudo.innerHTML = `<p class="carregando">Carregando trabalhos…</p>`;
+
+    let trabalhos = [];
+    try {
+      trabalhos = await buscarTodosArquivos();
+    } catch (e) {
+      conteudo.innerHTML = `<p class="vazio">⚠️ Não foi possível carregar os arquivos. Verifique a conexão e recarregue a página.</p>`;
+      return;
+    }
+
+    todosTrabalhos = trabalhos;
+    contadorEl.textContent = `${trabalhos.length} trabalho${trabalhos.length !== 1 ? 's' : ''}`;
+    montarFiltrosCategoria(trabalhos);
+    renderizarLista(trabalhos);
+
+    busca.addEventListener("input", aplicarFiltros);
+  }
+
+  document.addEventListener("DOMContentLoaded", montarSite);
+  montarSite();
+</script>
+
+</body>
+</html>
