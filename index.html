@@ -608,7 +608,7 @@
     return nomeArquivo
       .replace(/\.[^.]+$/, "")
       .replace(/[-_]+/g, " ")
-      .replace(/\b\w/g, c => c.toUpperCase());
+      .replace(/(^|[^\p{L}])(\p{L})/gu, (m, sep, letra) => sep + letra.toUpperCase());
   }
 
   function extrairAno(nomeArquivo) {
